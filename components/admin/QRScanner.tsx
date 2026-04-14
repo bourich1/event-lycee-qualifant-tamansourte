@@ -1,8 +1,16 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import type { ReactNode } from 'react'
 
-type ScanState = 'idle' | 'scanning' | 'processing' | 'success' | 'warning' | 'error'
+// 'idle' removed — component starts in 'scanning' directly when modal opens
+type ScanState = 'scanning' | 'processing' | 'success' | 'warning' | 'error'
+
+interface StateConfigEntry {
+  border: string
+  anim: string
+  overlay: ReactNode
+}
 
 interface QRScannerProps {
   onScanResult?: (result: { type: 'success' | 'warning' | 'error'; message: string }) => void
@@ -222,8 +230,9 @@ export default function QRScanner({ onScanResult }: QRScannerProps) {
   // ── Cleanup on unmount ────────────────────────────────────────────────────
   useEffect(() => () => stopCamera(), [stopCamera])
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-  const stateConfig = {
+  // Record<ScanState, StateConfigEntry> ensures ALL states are handled.
+  // TypeScript will error at compile time if any state key is missing.
+  const stateConfig: Record<ScanState, StateConfigEntry> = {
     scanning: {
       border: 'rgba(108,92,231,0.7)',
       anim: '',
