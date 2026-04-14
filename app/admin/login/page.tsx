@@ -16,13 +16,10 @@ export default function AdminLoginPage() {
     setError('')
     setLoading(true)
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
 
     if (authError) {
-      setError('Identifiants invalides. Veuillez réessayer.')
+      setError('Invalid credentials. Please try again.')
       setLoading(false)
       return
     }
@@ -31,17 +28,13 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-6"
-      style={{ background: '#0a0a0f' }}
-    >
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#0a0a0f' }}>
       {/* Background effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div
           className="absolute inset-0"
           style={{
-            background:
-              'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(108,92,231,0.08) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(108,92,231,0.08) 0%, transparent 70%)',
           }}
         />
         <div className="absolute inset-0 grid-bg opacity-20" />
@@ -59,12 +52,8 @@ export default function AdminLoginPage() {
           >
             LQ
           </div>
-          <h1 className="font-syne font-black text-2xl text-[#f0f0ff] mb-1">
-            Administration
-          </h1>
-          <p className="font-dm text-sm text-[#8888aa]">
-            Espace réservé aux administrateurs
-          </p>
+          <h1 className="font-syne font-black text-2xl text-[#f0f0ff] mb-1">Administration</h1>
+          <p className="font-dm text-sm text-[#8888aa]">Restricted access — administrators only</p>
         </div>
 
         {/* Card */}
@@ -77,11 +66,8 @@ export default function AdminLoginPage() {
           }}
         >
           <form onSubmit={handleLogin} className="space-y-5">
-            {/* Email */}
             <div>
-              <label className="block font-dm text-sm text-[#8888aa] mb-2 font-medium">
-                Email
-              </label>
+              <label className="block font-dm text-sm text-[#8888aa] mb-2 font-medium">Email</label>
               <input
                 id="admin-email"
                 type="email"
@@ -94,11 +80,8 @@ export default function AdminLoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block font-dm text-sm text-[#8888aa] mb-2 font-medium">
-                Mot de passe
-              </label>
+              <label className="block font-dm text-sm text-[#8888aa] mb-2 font-medium">Password</label>
               <input
                 id="admin-password"
                 type="password"
@@ -111,7 +94,6 @@ export default function AdminLoginPage() {
               />
             </div>
 
-            {/* Error */}
             {error && (
               <div
                 className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-dm"
@@ -126,7 +108,6 @@ export default function AdminLoginPage() {
               </div>
             )}
 
-            {/* Submit */}
             <button
               id="admin-login-btn"
               type="submit"
@@ -137,17 +118,17 @@ export default function AdminLoginPage() {
               {loading ? (
                 <>
                   <div className="spinner" />
-                  <span>Connexion...</span>
+                  <span>Signing in...</span>
                 </>
               ) : (
-                <span>Se connecter</span>
+                <span>Sign In</span>
               )}
             </button>
           </form>
         </div>
 
         <p className="text-center font-dm text-xs text-[#8888aa] mt-6">
-          Accès réservé — Lycée Qualifiant Tamansourte
+          Restricted access — Tamansourte High School
         </p>
       </div>
     </div>

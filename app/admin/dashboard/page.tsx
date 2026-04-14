@@ -79,7 +79,7 @@ export default function AdminDashboard() {
         { event: 'INSERT', schema: 'public', table: 'attendees' },
         (payload) => {
           setAttendees((prev) => [payload.new as Attendee, ...prev])
-          addToast('success', `Nouvel inscrit : ${(payload.new as Attendee).full_name}`)
+          addToast('success', `New registration: ${(payload.new as Attendee).full_name}`)
         }
       )
       .on(
@@ -125,7 +125,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
         <div className="text-center">
           <div className="inline-block w-10 h-10 border-2 border-[#6c5ce7] border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="font-dm text-[#8888aa]">Chargement du tableau de bord...</p>
+          <p className="font-dm text-[#8888aa]">Loading dashboard...</p>
         </div>
       </div>
     )
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
                 }}
               />
               <span className="font-dm text-xs text-[#8888aa]">
-                {realtimeStatus === 'connected' ? 'Temps réel' : realtimeStatus === 'error' ? 'Erreur' : 'Connexion...'}
+                {realtimeStatus === 'connected' ? 'Realtime' : realtimeStatus === 'error' ? 'Error' : 'Connecting...'}
               </span>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function AdminDashboard() {
             className="px-4 py-2 rounded-full font-dm font-medium text-sm text-[#8888aa] hover:text-white transition-all duration-200"
             style={{ border: '1px solid rgba(255,255,255,0.1)' }}
           >
-            Déconnexion
+            Sign Out
           </button>
         </div>
       </nav>

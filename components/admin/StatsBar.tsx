@@ -23,7 +23,7 @@ export default function StatsBar({ attendees }: StatsBarProps) {
   const stats = [
     {
       id: 'stat-total',
-      label: 'Total inscrits',
+      label: 'Total Registered',
       value: total,
       icon: '👥',
       color: '#a29bfe',
@@ -32,7 +32,7 @@ export default function StatsBar({ attendees }: StatsBarProps) {
     },
     {
       id: 'stat-checkedin',
-      label: 'Présents',
+      label: 'Checked In',
       value: checkedIn,
       icon: '✅',
       color: '#00b894',
@@ -41,7 +41,7 @@ export default function StatsBar({ attendees }: StatsBarProps) {
     },
     {
       id: 'stat-pending',
-      label: 'En attente',
+      label: 'Pending',
       value: pending,
       icon: '⏳',
       color: '#fdcb6e',
@@ -58,10 +58,7 @@ export default function StatsBar({ attendees }: StatsBarProps) {
             key={stat.id}
             id={stat.id}
             className="rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5"
-            style={{
-              background: stat.bg,
-              border: `1px solid ${stat.border}`,
-            }}
+            style={{ background: stat.bg, border: `1px solid ${stat.border}` }}
           >
             <div className="flex items-center justify-between mb-3">
               <span className="text-2xl">{stat.icon}</span>
@@ -72,10 +69,7 @@ export default function StatsBar({ attendees }: StatsBarProps) {
                 {stat.label}
               </span>
             </div>
-            <p
-              className="font-syne font-black text-4xl"
-              style={{ color: stat.color }}
-            >
+            <p className="font-syne font-black text-4xl" style={{ color: stat.color }}>
               {stat.value.toLocaleString()}
             </p>
           </div>
@@ -85,22 +79,16 @@ export default function StatsBar({ attendees }: StatsBarProps) {
       {/* Progress bar */}
       <div
         className="rounded-2xl p-5"
-        style={{
-          background: '#13131a',
-          border: '1px solid rgba(255,255,255,0.06)',
-        }}
+        style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.06)' }}
       >
         <div className="flex items-center justify-between mb-3">
-          <span className="font-dm text-sm text-[#8888aa]">Taux de présence</span>
+          <span className="font-dm text-sm text-[#8888aa]">Attendance rate</span>
           <span className="font-syne font-bold text-[#a29bfe]">{percentage}%</span>
         </div>
         <div className="w-full h-2 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
           <div
             className="h-2 rounded-full transition-all duration-700"
-            style={{
-              width: `${percentage}%`,
-              background: 'linear-gradient(90deg, #6c5ce7, #00b894)',
-            }}
+            style={{ width: `${percentage}%`, background: 'linear-gradient(90deg, #6c5ce7, #00b894)' }}
           />
         </div>
       </div>

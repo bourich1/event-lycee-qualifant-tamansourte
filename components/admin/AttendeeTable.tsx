@@ -39,43 +39,35 @@ export default function AttendeeTable({ attendees }: AttendeeTableProps) {
     })
   }, [attendees, search, filterStatus])
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('en-GB', {
+      day: '2-digit', month: '2-digit', year: '2-digit',
+      hour: '2-digit', minute: '2-digit',
     })
-  }
 
   return (
     <div
       className="rounded-2xl overflow-hidden"
       style={{ border: '1px solid rgba(255,255,255,0.06)', background: '#13131a' }}
     >
-      {/* Table header with search and filter */}
+      {/* Header */}
       <div className="p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between border-b border-white/[0.06]">
         <h2 className="font-syne font-bold text-lg text-[#f0f0ff]">
-          Participants ({filtered.length})
+          Attendees ({filtered.length})
         </h2>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          {/* Search */}
           <div className="relative">
             <input
               id="attendee-search"
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Rechercher..."
+              placeholder="Search..."
               className="input-field pr-10"
               style={{ width: '220px', paddingLeft: '38px' }}
             />
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8888aa] text-base">
-              🔍
-            </span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8888aa] text-base">🔍</span>
           </div>
-          {/* Filter */}
           <select
             id="status-filter"
             value={filterStatus}
@@ -83,9 +75,9 @@ export default function AttendeeTable({ attendees }: AttendeeTableProps) {
             className="input-field"
             style={{ width: 'auto', cursor: 'pointer' }}
           >
-            <option value="all" style={{ background: '#13131a' }}>Tous</option>
-            <option value="checked" style={{ background: '#13131a' }}>Présents</option>
-            <option value="pending" style={{ background: '#13131a' }}>En attente</option>
+            <option value="all" style={{ background: '#13131a' }}>All</option>
+            <option value="checked" style={{ background: '#13131a' }}>Checked In</option>
+            <option value="pending" style={{ background: '#13131a' }}>Pending</option>
           </select>
         </div>
       </div>
@@ -95,13 +87,13 @@ export default function AttendeeTable({ attendees }: AttendeeTableProps) {
         {filtered.length === 0 ? (
           <div className="py-16 text-center text-[#8888aa] font-dm">
             <div className="text-4xl mb-3">🔍</div>
-            <p>Aucun participant trouvé</p>
+            <p>No attendees found</p>
           </div>
         ) : (
           <table className="w-full">
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['Nom', 'Email', 'Établissement', 'Statut', 'Inscrit le'].map((col) => (
+                {['Name', 'Email', 'School', 'Status', 'Registered At'].map((col) => (
                   <th
                     key={col}
                     className="px-5 py-3.5 text-left font-dm text-xs font-semibold text-[#8888aa] uppercase tracking-wider"
@@ -118,22 +110,17 @@ export default function AttendeeTable({ attendees }: AttendeeTableProps) {
                   key={attendee.id}
                   className="transition-colors duration-150 hover:bg-white/[0.02]"
                   style={{
-                    borderBottom:
-                      idx < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                    borderBottom: idx < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
                   }}
                 >
                   <td className="px-5 py-4">
-                    <span className="font-dm font-medium text-[#f0f0ff]">
-                      {attendee.full_name}
-                    </span>
+                    <span className="font-dm font-medium text-[#f0f0ff]">{attendee.full_name}</span>
                   </td>
                   <td className="px-5 py-4">
                     <span className="font-dm text-sm text-[#8888aa]">{attendee.email}</span>
                   </td>
                   <td className="px-5 py-4">
-                    <span className="font-dm text-sm text-[#8888aa]">
-                      {attendee.schools?.name ?? '—'}
-                    </span>
+                    <span className="font-dm text-sm text-[#8888aa]">{attendee.schools?.name ?? '—'}</span>
                   </td>
                   <td className="px-5 py-4">
                     {attendee.checked_in ? (
@@ -145,7 +132,7 @@ export default function AttendeeTable({ attendees }: AttendeeTableProps) {
                           border: '1px solid rgba(0,184,148,0.3)',
                         }}
                       >
-                        ✓ Présent
+                        ✓ Checked In
                       </span>
                     ) : (
                       <span
@@ -156,14 +143,12 @@ export default function AttendeeTable({ attendees }: AttendeeTableProps) {
                           border: '1px solid rgba(253,203,110,0.25)',
                         }}
                       >
-                        ⏳ En attente
+                        ⏳ Pending
                       </span>
                     )}
                   </td>
                   <td className="px-5 py-4">
-                    <span className="font-dm text-xs text-[#8888aa]">
-                      {formatDate(attendee.created_at)}
-                    </span>
+                    <span className="font-dm text-xs text-[#8888aa]">{formatDate(attendee.created_at)}</span>
                   </td>
                 </tr>
               ))}

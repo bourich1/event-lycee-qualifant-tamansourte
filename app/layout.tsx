@@ -17,13 +17,12 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Lycée Qualifiant Tamansourte — Inscription Événement',
-  description:
-    'Inscrivez-vous à l\'événement du Lycée Qualifiant Tamansourte et obtenez votre pass numérique avec QR code.',
-  keywords: 'lycée, tamansourte, événement, inscription, scolaire',
+  title: 'Tamansourte High School — Event Registration',
+  description: 'Register for the Tamansourte High School event and get your digital pass with QR code.',
+  keywords: 'tamansourte, high school, event, registration',
   openGraph: {
-    title: 'Lycée Qualifiant Tamansourte — Inscription Événement',
-    description: 'Inscrivez-vous et recevez votre pass numérique.',
+    title: 'Tamansourte High School — Event Registration',
+    description: 'Register and receive your digital pass.',
     type: 'website',
   },
 }
@@ -34,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr" className={`${syne.variable} ${dmSans.variable}`}>
+    <html lang="en" className={`${syne.variable} ${dmSans.variable}`}>
       <body className="bg-[#0a0a0f] text-[#f0f0ff] font-dm antialiased min-h-screen">
         {children}
       </body>

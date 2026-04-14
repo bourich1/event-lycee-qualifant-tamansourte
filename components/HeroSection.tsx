@@ -145,22 +145,22 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
 
         {/* Subtitle */}
         <p className="animate-fadeUp-delay-3 font-dm text-lg md:text-xl text-[#8888aa] mb-10 max-w-2xl mx-auto leading-relaxed">
-          Bienvenue à l&apos;événement annuel du Lycée Qualifiant Tamansourte.
-          Rejoignez des centaines d&apos;élèves pour une journée inoubliable de compétitions,
-          d&apos;échanges et de découvertes.
+          Welcome to the annual event of Tamansourte High School.
+          Join hundreds of students for an unforgettable day of competitions,
+          networking, and discovery.
         </p>
 
         {/* CTA Button */}
         <div className="animate-fadeUp-delay-4 flex flex-col sm:flex-row items-center justify-center gap-4">
           <button onClick={onGetPass} className="btn-primary text-lg px-10 py-4">
-            Obtenir mon pass 🎟️
+            Get My Pass 🎟️
           </button>
           <a
             href="#about"
             className="px-8 py-4 rounded-full font-syne font-semibold text-[#a29bfe] hover:text-white transition-colors duration-200"
             style={{ border: '1px solid rgba(162,155,254,0.3)' }}
           >
-            En savoir plus →
+            Learn more →
           </a>
         </div>
 
@@ -169,7 +169,7 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
           {[
             { icon: '📅', text: 'EVENT DATE' },
             { icon: '📍', text: 'EVENT LOCATION' },
-            { icon: '🎓', text: 'Tous niveaux' },
+            { icon: '🎓', text: 'All levels' },
           ].map((item) => (
             <div
               key={item.text}

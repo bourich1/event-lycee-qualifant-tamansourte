@@ -45,7 +45,7 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
         .eq('email', email)
         .maybeSingle()
       setEmailExists(!!data)
-    }, 600) // debounce 600ms
+    }, 600)
     return () => clearTimeout(timer)
   }, [email])
 
@@ -53,19 +53,16 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
     e.preventDefault()
     setError('')
 
-    // Block if email already exists
     if (emailExists) {
-      setError('Cet email est déjà inscrit à l\'événement.')
+      setError('This email is already registered for this event.')
       return
     }
 
     setLoading(true)
 
     try {
-      // 1. Generate unique QR token
       const qr_code = crypto.randomUUID()
 
-      // 2. Insert attendee into Supabase
       const { error: insertError } = await supabase.from('attendees').insert({
         full_name: fullName,
         email: email,
@@ -75,25 +72,24 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
 
       if (insertError) {
         if (insertError.message.includes('unique') || insertError.code === '23505') {
-          setError('Cet email est déjà inscrit à l\'événement.')
+          setError('This email is already registered for this event.')
         } else {
-          setError('Une erreur est survenue. Veuillez réessayer.')
+          setError('An error occurred. Please try again.')
         }
         setLoading(false)
         return
       }
 
-      // 3. Send pass email via API (non-blocking)
+      // Send pass email (non-blocking)
       fetch('/api/send-pass', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ full_name: fullName, email, qr_code }),
       }).catch(() => console.error('Email sending failed'))
 
-      // 4. Success — pass qr_code so parent can show the pass
       onSuccess(fullName, qr_code)
     } catch {
-      setError('Une erreur inattendue est survenue.')
+      setError('An unexpected error occurred.')
       setLoading(false)
     }
   }
@@ -112,7 +108,6 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
           boxShadow: '0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(108,92,231,0.1)',
         }}
       >
-        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center text-[#8888aa] hover:text-white hover:bg-white/10 transition-all duration-200"
@@ -120,16 +115,15 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
           ✕
         </button>
 
-        {/* Header */}
         <div className="mb-8">
           <div className="w-12 h-12 rounded-2xl bg-[#6c5ce7]/20 flex items-center justify-center text-2xl mb-4">
             🎟️
           </div>
           <h2 className="font-syne font-black text-2xl text-[#f0f0ff] mb-1">
-            Obtenir mon pass
+            Get My Pass
           </h2>
           <p className="font-dm text-sm text-[#8888aa]">
-            Remplissez le formulaire et recevez votre QR code par email.
+            Fill in the form and receive your QR code by email.
           </p>
         </div>
 
@@ -137,14 +131,14 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
           {/* Full Name */}
           <div>
             <label className="block font-dm text-sm text-[#8888aa] mb-2 font-medium">
-              Nom complet <span className="text-[#6c5ce7]">*</span>
+              Full Name <span className="text-[#6c5ce7]">*</span>
             </label>
             <input
               type="text"
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Votre nom et prénom"
+              placeholder="Your full name"
               className="input-field"
             />
           </div>
@@ -152,7 +146,7 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
           {/* Email */}
           <div>
             <label className="block font-dm text-sm text-[#8888aa] mb-2 font-medium">
-              Adresse email <span className="text-[#6c5ce7]">*</span>
+              Email Address <span className="text-[#6c5ce7]">*</span>
             </label>
             <div className="relative">
               <input
@@ -160,7 +154,7 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
                 required
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setError('') }}
-                placeholder="votre@email.com"
+                placeholder="your@email.com"
                 className="input-field pr-10"
                 style={
                   emailExists
@@ -168,14 +162,12 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
                     : {}
                 }
               />
-              {/* Live indicator */}
               {email.includes('@') && (
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-base">
                   {emailExists ? '❌' : '✅'}
                 </span>
               )}
             </div>
-            {/* Already registered inline warning */}
             {emailExists && (
               <div
                 className="mt-2 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-dm"
@@ -186,7 +178,7 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
                 }}
               >
                 <span>⚠️</span>
-                <span>Cet email est déjà inscrit à l&apos;événement.</span>
+                <span>This email is already registered for this event.</span>
               </div>
             )}
           </div>
@@ -194,12 +186,12 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
           {/* School */}
           <div>
             <label className="block font-dm text-sm text-[#8888aa] mb-2 font-medium">
-              Établissement
+              School
             </label>
             {loadingSchools ? (
               <div className="input-field flex items-center gap-3 text-[#8888aa]">
                 <div className="spinner opacity-60" />
-                <span className="text-sm">Chargement...</span>
+                <span className="text-sm">Loading...</span>
               </div>
             ) : (
               <select
@@ -208,7 +200,7 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
                 className="input-field"
                 style={{ cursor: 'pointer' }}
               >
-                <option value="">Sélectionner un établissement</option>
+                <option value="">Select a school</option>
                 {schools.map((school) => (
                   <option key={school.id} value={school.id} style={{ background: '#13131a' }}>
                     {school.name}
@@ -218,7 +210,7 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
             )}
           </div>
 
-          {/* Submission Error */}
+          {/* Error */}
           {error && (
             <div
               className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-dm"
@@ -243,20 +235,19 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
             {loading ? (
               <>
                 <div className="spinner" />
-                <span>Inscription en cours...</span>
+                <span>Registering...</span>
               </>
             ) : (
               <>
-                <span>S&apos;inscrire</span>
+                <span>Register</span>
                 <span>→</span>
               </>
             )}
           </button>
         </form>
 
-        {/* Footer note */}
         <p className="text-center font-dm text-xs text-[#8888aa] mt-5">
-          Votre pass sera envoyé à l&apos;adresse email fournie.
+          Your pass will be sent to the email address provided.
         </p>
       </div>
     </div>

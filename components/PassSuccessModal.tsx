@@ -12,7 +12,6 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
   const [qrDataUrl, setQrDataUrl] = useState<string>('')
   const [generatingQr, setGeneratingQr] = useState(true)
 
-  // Generate QR code client-side
   useEffect(() => {
     let cancelled = false
     const generate = async () => {
@@ -21,10 +20,7 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
         const dataUrl = await QRCode.toDataURL(qrCode, {
           width: 280,
           margin: 2,
-          color: {
-            dark: '#6c5ce7',
-            light: '#13131a',
-          },
+          color: { dark: '#6c5ce7', light: '#13131a' },
         })
         if (!cancelled) {
           setQrDataUrl(dataUrl)
@@ -71,7 +67,6 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
           <div className="w-72 h-72 rounded-full bg-[#6c5ce7]/8 blur-3xl" />
         </div>
 
-        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center text-[#8888aa] hover:text-white hover:bg-white/10 transition-all duration-200 z-10"
@@ -80,7 +75,6 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
         </button>
 
         <div className="p-8 text-center relative">
-          {/* Success icon */}
           <div className="flex justify-center mb-4">
             <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
@@ -94,12 +88,12 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
           </div>
 
           <h2 className="font-syne font-black text-xl text-[#f0f0ff] mb-1">
-            Inscription confirmée !
+            Registration Confirmed!
           </h2>
           <p className="font-dm text-sm text-[#8888aa] mb-6">
-            Bienvenue{' '}
-            <span className="text-[#a29bfe] font-semibold">{name.split(' ')[0]}</span> —
-            voici votre pass d&apos;accès
+            Welcome{' '}
+            <span className="text-[#a29bfe] font-semibold">{name.split(' ')[0]}</span>{' '}
+            — here is your event pass
           </p>
 
           {/* Pass card */}
@@ -110,7 +104,6 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
               border: '1px solid rgba(108,92,231,0.2)',
             }}
           >
-            {/* Event info */}
             <div className="mb-4 space-y-1.5 text-left">
               <div className="flex items-center gap-2 text-xs font-dm text-[#8888aa]">
                 <span>📅</span><span>EVENT DATE</span>
@@ -124,7 +117,6 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
               </div>
             </div>
 
-            {/* Divider */}
             <div
               className="my-4 border-t border-dashed"
               style={{ borderColor: 'rgba(108,92,231,0.25)' }}
@@ -154,26 +146,23 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={qrDataUrl}
-                    alt="QR Code de votre pass"
+                    alt="Your event pass QR code"
                     width={160}
                     height={160}
                     className="block rounded-lg"
                   />
                 </div>
               ) : (
-                <div className="text-[#8888aa] text-sm font-dm">
-                  QR code non disponible
-                </div>
+                <div className="text-[#8888aa] text-sm font-dm">QR code unavailable</div>
               )}
             </div>
             <p className="font-dm text-xs text-[#8888aa] mt-3">
-              Présentez ce QR code à l&apos;entrée
+              Present this QR code at the entrance
             </p>
           </div>
 
           {/* Actions */}
           <div className="space-y-3">
-            {/* Download button */}
             <button
               onClick={handleDownload}
               disabled={!qrDataUrl}
@@ -194,10 +183,9 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
               }
             >
               <span>⬇️</span>
-              <span>Télécharger le pass</span>
+              <span>Download Pass</span>
             </button>
 
-            {/* Email reminder */}
             <div
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-dm"
               style={{
@@ -207,15 +195,14 @@ export default function PassSuccessModal({ name, qrCode, onClose }: PassSuccessM
               }}
             >
               <span>📧</span>
-              <span>Un email avec votre pass a aussi été envoyé</span>
+              <span>A copy has also been sent to your email</span>
             </div>
 
-            {/* Close */}
             <button
               onClick={onClose}
               className="w-full py-2.5 font-dm text-sm text-[#8888aa] hover:text-white transition-colors duration-200"
             >
-              Fermer
+              Close
             </button>
           </div>
         </div>
