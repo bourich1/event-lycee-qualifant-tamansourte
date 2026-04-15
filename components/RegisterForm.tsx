@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { getSchoolGradient, getSchoolColor } from '@/lib/theme'
 
 interface RegisterFormProps {
   onClose: () => void
-  onSuccess: (name: string, qrCode: string) => void
+  onSuccess: (name: string, qrCode: string, email: string, schoolName: string) => void
 }
 
 interface School {
@@ -87,12 +88,15 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
         body: JSON.stringify({ full_name: fullName, email, qr_code }),
       }).catch(() => console.error('Email sending failed'))
 
-      onSuccess(fullName, qr_code)
+      const schoolName = schools.find((s) => s.id === schoolId)?.name || 'Tamansourte High School'
+      onSuccess(fullName, qr_code, email, schoolName)
     } catch {
       setError('An unexpected error occurred.')
       setLoading(false)
     }
   }
+
+  const schoolThemeColor = schoolId ? getSchoolColor(schools.find(s => s.id === schoolId)?.name || '') : null
 
   return (
     <div
@@ -101,13 +105,21 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="w-full max-w-md rounded-3xl p-8 relative animate-scaleIn"
+        className="w-full max-w-md rounded-3xl p-8 relative animate-scaleIn transition-all duration-500"
         style={{
           background: '#13131a',
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: '0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(108,92,231,0.1)',
+          border: `1px solid ${schoolThemeColor ? schoolThemeColor : 'rgba(255,255,255,0.1)'}`,
+          boxShadow: `0 40px 100px rgba(0,0,0,0.6), 0 0 80px ${schoolThemeColor ? schoolThemeColor + '40' : 'rgba(108,92,231,0.1)'}`,
         }}
       >
+        {schoolThemeColor && (
+          <style dangerouslySetInnerHTML={{ __html: `
+            .input-field:focus {
+              border-color: ${schoolThemeColor} !important;
+              box-shadow: 0 0 0 3px ${schoolThemeColor}40 !important;
+            }
+          `}} />
+        )}
         <button
           onClick={onClose}
           className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center text-[#8888aa] hover:text-white hover:bg-white/10 transition-all duration-200"
@@ -230,7 +242,13 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
             type="submit"
             disabled={loading || emailExists}
             className="btn-primary w-full flex items-center justify-center gap-3 mt-6"
-            style={loading || emailExists ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+            style={
+              loading || emailExists 
+                ? { opacity: 0.6, cursor: 'not-allowed' } 
+                : schoolThemeColor 
+                  ? { background: `linear-gradient(135deg, ${schoolThemeColor}, ${schoolThemeColor}dd)`, boxShadow: `0 0 30px ${schoolThemeColor}50` }
+                  : {}
+            }
           >
             {loading ? (
               <>

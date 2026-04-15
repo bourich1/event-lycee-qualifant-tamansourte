@@ -10,10 +10,14 @@ export default function HomePage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [registeredName, setRegisteredName] = useState('')
   const [registeredQrCode, setRegisteredQrCode] = useState('')
+  const [registeredEmail, setRegisteredEmail] = useState('')
+  const [registeredSchool, setRegisteredSchool] = useState('')
 
-  const handleRegisterSuccess = (name: string, qrCode: string) => {
+  const handleRegisterSuccess = (name: string, qrCode: string, email: string, schoolName: string) => {
     setRegisteredName(name)
     setRegisteredQrCode(qrCode)
+    setRegisteredEmail(email)
+    setRegisteredSchool(schoolName)
     setShowRegisterForm(false)
     setShowSuccess(true)
   }
@@ -118,6 +122,8 @@ export default function HomePage() {
         <PassSuccessModal
           name={registeredName}
           qrCode={registeredQrCode}
+          email={registeredEmail}
+          schoolName={registeredSchool}
           onClose={() => setShowSuccess(false)}
         />
       )}
