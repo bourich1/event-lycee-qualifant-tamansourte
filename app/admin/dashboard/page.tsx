@@ -190,6 +190,13 @@ export default function AdminDashboard() {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => router.push('/')}
+            className="px-3 py-2 rounded-xl font-dm font-medium text-xs text-[#8888aa] hover:text-white transition-all"
+            style={{ border: '1px solid rgba(255,255,255,0.08)' }}
+          >
+            🏠 Home
+          </button>
           {/* QRScanner is a simple nav button — no props needed */}
           <QRScanner />
           <button

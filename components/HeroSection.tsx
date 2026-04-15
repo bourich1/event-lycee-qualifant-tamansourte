@@ -156,11 +156,11 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
             Get My Pass 🎟️
           </button>
           <a
-            href="#about"
+            href="/admin/dashboard"
             className="px-8 py-4 rounded-full font-syne font-semibold text-[#a29bfe] hover:text-white transition-colors duration-200"
             style={{ border: '1px solid rgba(162,155,254,0.3)' }}
           >
-            Learn more →
+            Dashboard →
           </a>
         </div>
 
