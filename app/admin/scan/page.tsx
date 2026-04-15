@@ -27,7 +27,7 @@ function playSound(type: 'success' | 'warning' | 'error') {
   } catch { /* silent */ }
 }
 
-// ─── jsQR decoder ─────────────────────────────────────────────────────────────
+// ─── jsQR Decoder ─────────────────────────────────────────────────────────────
 async function decodeFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement): Promise<string | null> {
   if (video.videoWidth === 0 || video.readyState < 2) return null
   canvas.width  = video.videoWidth
@@ -43,9 +43,10 @@ async function decodeFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement): 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function ScanPage() {
   const router = useRouter()
-  const [result, setResult]       = useState<ScanResult>('idle')
+
+  const [result, setResult]           = useState<ScanResult>('idle')
   const [attendeeName, setAttendeeName] = useState('')
-  const [cameraErr, setCameraErr] = useState('')
+  const [cameraErr, setCameraErr]     = useState('')
 
   const videoRef   = useRef<HTMLVideoElement>(null)
   const canvasRef  = useRef<HTMLCanvasElement>(null)
@@ -63,9 +64,12 @@ export default function ScanPage() {
         video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
       })
       streamRef.current = stream
-      if (videoRef.current) { videoRef.current.srcObject = stream; await videoRef.current.play() }
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        await videoRef.current.play()
+      }
     } catch {
-      setCameraErr('Camera access denied. Please allow camera access and reload.')
+      setCameraErr('Camera access denied. Allow camera and reload.')
     }
   }, [])
 
@@ -75,7 +79,7 @@ export default function ScanPage() {
     streamRef.current = null
   }, [])
 
-  // ── Handle scan result ────────────────────────────────────────────────────
+  // ── Handle QR result ──────────────────────────────────────────────────────
   const handleQR = useCallback(async (qr_code: string) => {
     if (processing.current) return
     processing.current = true
@@ -97,7 +101,9 @@ export default function ScanPage() {
         setResult('success'); setAttendeeName(data.attendee?.full_name ?? ''); playSound('success')
       }
 
-      setTimeout(() => { setResult('idle'); setAttendeeName(''); processing.current = false }, 3000)
+      setTimeout(() => {
+        setResult('idle'); setAttendeeName(''); processing.current = false
+      }, 3000)
     } catch {
       setResult('error'); setAttendeeName(''); playSound('error')
       setTimeout(() => { setResult('idle'); processing.current = false }, 3000)
@@ -123,264 +129,297 @@ export default function ScanPage() {
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
   }, [handleQR])
 
-  useEffect(() => { startCamera(); return () => stopCamera() }, [startCamera, stopCamera])
+  useEffect(() => {
+    startCamera()
+    return () => stopCamera()
+  }, [startCamera, stopCamera])
 
-  // ── Frame border color ─────────────────────────────────────────────────────
+  // ── Derived state ─────────────────────────────────────────────────────────
   const frameBorder =
     result === 'success'    ? '#00b894' :
     result === 'warning'    ? '#fdcb6e' :
     result === 'error'      ? '#e17055' :
     result === 'processing' ? '#a29bfe' : '#6c5ce7'
 
+  const frameGlow =
+    result === 'success'    ? 'rgba(0,184,148,0.5)' :
+    result === 'warning'    ? 'rgba(253,203,110,0.5)' :
+    result === 'error'      ? 'rgba(225,112,85,0.5)' :
+    result === 'processing' ? 'rgba(162,155,254,0.4)' : 'rgba(108,92,231,0.4)'
+
   const frameAnim =
     result === 'success' ? 'qr-success' :
     result === 'warning' ? 'qr-warning' :
     result === 'error'   ? 'qr-error'   : ''
 
-  // ── Result cards config ───────────────────────────────────────────────────
   const cards = [
-    {
-      id:     'success' as const,
-      icon:   '✅',
-      label:  'Accepted',
-      color:  '#00b894',
-      bg:     'rgba(0,184,148,0.12)',
-      border: 'rgba(0,184,148,0.4)',
-      shadow: 'rgba(0,184,148,0.35)',
-    },
-    {
-      id:     'warning' as const,
-      icon:   '⚠️',
-      label:  'Already In',
-      color:  '#fdcb6e',
-      bg:     'rgba(253,203,110,0.12)',
-      border: 'rgba(253,203,110,0.4)',
-      shadow: 'rgba(253,203,110,0.35)',
-    },
-    {
-      id:     'error' as const,
-      icon:   '❌',
-      label:  'Invalid',
-      color:  '#e17055',
-      bg:     'rgba(225,112,85,0.12)',
-      border: 'rgba(225,112,85,0.4)',
-      shadow: 'rgba(225,112,85,0.35)',
-    },
+    { id: 'success' as const, icon: '✅', label: 'Accepted',   color: '#00b894', bg: 'rgba(0,184,148,0.15)',    border: 'rgba(0,184,148,0.5)',    glow: 'rgba(0,184,148,0.4)'    },
+    { id: 'warning' as const, icon: '⚠️', label: 'Already In', color: '#fdcb6e', bg: 'rgba(253,203,110,0.15)', border: 'rgba(253,203,110,0.5)',  glow: 'rgba(253,203,110,0.4)' },
+    { id: 'error'   as const, icon: '❌', label: 'Invalid',    color: '#e17055', bg: 'rgba(225,112,85,0.15)',   border: 'rgba(225,112,85,0.5)',   glow: 'rgba(225,112,85,0.4)'  },
   ]
 
   return (
     <div
       className="fixed inset-0 flex flex-col overflow-hidden"
-      style={{ background: '#0a0a0f' }}
+      style={{ background: 'linear-gradient(160deg, #0d0d18 0%, #0a0a0f 100%)' }}
     >
+      {/* ── Background grid ─────────────────────────────────────────────── */}
+      <div className="absolute inset-0 grid-bg opacity-20 pointer-events-none" />
+
       {/* ── Top bar ─────────────────────────────────────────────────────── */}
       <div
-        className="flex items-center gap-3 px-4 py-3 shrink-0"
+        className="relative flex items-center gap-3 px-4 py-3 shrink-0"
         style={{
-          background: 'rgba(19,19,26,0.98)',
-          borderBottom: '1px solid rgba(255,255,255,0.07)',
+          background: 'rgba(13,13,24,0.95)',
+          borderBottom: '1px solid rgba(108,92,231,0.2)',
+          backdropFilter: 'blur(20px)',
           zIndex: 10,
         }}
       >
         <button
           onClick={() => { stopCamera(); router.push('/admin/dashboard') }}
-          className="w-9 h-9 rounded-xl flex items-center justify-center text-[#8888aa] hover:text-white hover:bg-white/10 transition-all"
+          className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-white/10 active:scale-95"
+          style={{ color: '#a29bfe', border: '1px solid rgba(108,92,231,0.3)' }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 5l-7 7 7 7" />
           </svg>
         </button>
-        <div>
-          <h1 className="font-syne font-bold text-base text-[#f0f0ff] leading-none">QR Scanner</h1>
-          <p className="font-dm text-xs text-[#8888aa] mt-0.5">
-            {result === 'processing' ? 'Verifying...' :
-             result === 'idle'       ? 'Ready to scan' :
-             result === 'success'    ? `✓ ${attendeeName}` :
-             result === 'warning'    ? `⚠ ${attendeeName}` : '✗ Invalid QR'}
-          </p>
-        </div>
-        {/* Live indicator */}
-        <div className="ml-auto flex items-center gap-2">
-          <div
-            className="w-2 h-2 rounded-full"
+
+        <div className="flex-1">
+          <h1 className="font-syne font-black text-base text-[#f0f0ff] leading-none">QR Scanner</h1>
+          <p
+            className="font-dm text-xs mt-0.5 font-medium"
             style={{
-              background: result === 'idle' || result === 'processing' ? '#6c5ce7' : frameBorder,
-              boxShadow: `0 0 6px ${result === 'idle' ? '#6c5ce7' : frameBorder}`,
-              animation: result === 'idle' ? 'btnScanPulse 1.5s ease-in-out infinite' : 'none',
-            }}
-          />
-          <span className="font-dm text-xs text-[#8888aa]">
-            {cameraErr ? 'No Camera' : 'Live'}
-          </span>
-        </div>
-      </div>
-
-      {/* ── Camera area — fills all remaining space ──────────────────────── */}
-      <div className="relative flex-1 overflow-hidden bg-black">
-        <video
-          ref={videoRef}
-          className="absolute inset-0 w-full h-full object-cover"
-          playsInline
-          muted
-          autoPlay
-        />
-        <canvas ref={canvasRef} className="hidden" />
-
-        {/* Darkened vignette to focus on scan frame */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(ellipse 58% 50% at 50% 48%, transparent 0%, rgba(0,0,0,0.6) 100%)',
-          }}
-        />
-
-        {/* Centered scan frame */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className={`relative ${frameAnim}`}
-            style={{
-              width:  'min(72vw, 72vh, 300px)',
-              height: 'min(72vw, 72vh, 300px)',
-              border: `3px solid ${frameBorder}`,
-              borderRadius: '22px',
-              transition: 'border-color 0.25s ease',
+              color:
+                result === 'success' ? '#00b894' :
+                result === 'warning' ? '#fdcb6e' :
+                result === 'error'   ? '#e17055' : '#8888aa',
             }}
           >
-            {/* Corners */}
-            {[
-              'top-0 left-0 border-t-[3px] border-l-[3px] rounded-tl-2xl',
-              'top-0 right-0 border-t-[3px] border-r-[3px] rounded-tr-2xl',
-              'bottom-0 left-0 border-b-[3px] border-l-[3px] rounded-bl-2xl',
-              'bottom-0 right-0 border-b-[3px] border-r-[3px] rounded-br-2xl',
-            ].map((cls, i) => (
-              <div
-                key={i}
-                className={`absolute w-8 h-8 ${cls}`}
-                style={{ borderColor: frameBorder, transition: 'border-color 0.25s ease' }}
-              />
-            ))}
-
-            {/* Scan line */}
-            {result === 'idle' && (
-              <div
-                className="absolute left-3 right-3 h-0.5 qr-scan-line"
-                style={{
-                  background: 'linear-gradient(90deg, transparent, #6c5ce7, #a29bfe, #6c5ce7, transparent)',
-                  boxShadow: '0 0 10px rgba(108,92,231,0.8)',
-                }}
-              />
-            )}
-
-            {/* Processing spinner */}
-            {result === 'processing' && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div
-                  className="w-12 h-12 rounded-full border-[3px] border-[#a29bfe] border-t-transparent"
-                  style={{ animation: 'spin 0.7s linear infinite' }}
-                />
-              </div>
-            )}
-
-            {/* Result icon inside frame */}
-            {(result === 'success' || result === 'warning' || result === 'error') && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 rounded-[18px]">
-                <span className="qr-result-icon" style={{ fontSize: '64px', lineHeight: 1 }}>
-                  {result === 'success' ? '✅' : result === 'warning' ? '⚠️' : '❌'}
-                </span>
-                {attendeeName && (
-                  <p className="font-syne font-bold text-white text-sm text-center px-3 leading-tight">
-                    {attendeeName}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
+            {result === 'idle'       && 'Ready — point at a QR code'}
+            {result === 'processing' && '⏳ Verifying...'}
+            {result === 'success'    && `✓ ${attendeeName} — Checked in!`}
+            {result === 'warning'    && `⚠ ${attendeeName} — Already checked in`}
+            {result === 'error'      && '✗ Invalid or unknown QR code'}
+          </p>
         </div>
 
-        {/* Camera error message */}
-        {cameraErr && (
-          <div className="absolute inset-0 flex items-center justify-center p-6">
-            <div
-              className="rounded-2xl p-6 text-center max-w-xs w-full"
+        {/* Pulse dot */}
+        <div
+          className="w-2.5 h-2.5 rounded-full"
+          style={{
+            background: frameBorder,
+            boxShadow: `0 0 8px ${frameBorder}`,
+            animation: result === 'idle' ? 'btnScanPulse 1.5s ease-in-out infinite' : 'none',
+            transition: 'background 0.3s ease',
+          }}
+        />
+      </div>
+
+      {/* ── Main content — scrollable center ────────────────────────────── */}
+      <div className="flex-1 flex flex-col items-center justify-between overflow-hidden px-4 py-5 gap-5">
+
+        {/* Scanner title */}
+        <div className="text-center shrink-0">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-dm font-semibold mb-2"
+            style={{
+              background: 'rgba(108,92,231,0.12)',
+              border: '1px solid rgba(108,92,231,0.3)',
+              color: '#a29bfe',
+            }}
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full"
               style={{
-                background: 'rgba(19,19,26,0.97)',
-                border: '1px solid rgba(225,112,85,0.4)',
+                background: '#6c5ce7',
+                animation: result === 'idle' ? 'btnScanPulse 1.5s ease-in-out infinite' : 'none',
               }}
-            >
-              <p className="text-5xl mb-3">📷</p>
-              <p className="font-syne font-bold text-[#f0f0ff] mb-2">Camera Access Denied</p>
-              <p className="font-dm text-sm text-[#8888aa] leading-relaxed mb-4">{cameraErr}</p>
+            />
+            Scanner Mode
+          </div>
+          <p className="font-dm text-sm text-[#8888aa]">
+            Scan attendee QR codes to verify entry
+          </p>
+        </div>
+
+        {/* ── Camera box — CENTERED & PROMINENT ────────────────────────── */}
+        <div
+          className={`relative w-full shrink-0 ${frameAnim}`}
+          style={{
+            maxWidth: '400px',
+            aspectRatio: '1 / 1',
+            borderRadius: '24px',
+            border: `3px solid ${frameBorder}`,
+            boxShadow: `0 0 40px ${frameGlow}, 0 0 80px ${frameGlow}40, inset 0 0 20px rgba(0,0,0,0.5)`,
+            overflow: 'hidden',
+            transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+            background: '#000',
+          }}
+        >
+          {/* Video feed */}
+          <video
+            ref={videoRef}
+            className="absolute inset-0 w-full h-full object-cover"
+            playsInline
+            muted
+            autoPlay
+          />
+          <canvas ref={canvasRef} className="hidden" />
+
+          {/* Corner markers */}
+          {[
+            'top-3 left-3 border-t-[3px] border-l-[3px] rounded-tl-xl',
+            'top-3 right-3 border-t-[3px] border-r-[3px] rounded-tr-xl',
+            'bottom-3 left-3 border-b-[3px] border-l-[3px] rounded-bl-xl',
+            'bottom-3 right-3 border-b-[3px] border-r-[3px] rounded-br-xl',
+          ].map((cls, i) => (
+            <div
+              key={i}
+              className={`absolute w-9 h-9 ${cls}`}
+              style={{ borderColor: frameBorder, transition: 'border-color 0.3s', zIndex: 5 }}
+            />
+          ))}
+
+          {/* Scan line */}
+          {result === 'idle' && (
+            <div
+              className="absolute left-4 right-4 h-0.5 qr-scan-line"
+              style={{
+                background: 'linear-gradient(90deg, transparent, #6c5ce7, #a29bfe, #6c5ce7, transparent)',
+                boxShadow: '0 0 12px rgba(108,92,231,0.9)',
+                zIndex: 5,
+              }}
+            />
+          )}
+
+          {/* Processing spinner */}
+          {result === 'processing' && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+              <div
+                className="w-16 h-16 rounded-full border-[3px] border-[#a29bfe] border-t-transparent"
+                style={{ animation: 'spin 0.7s linear infinite' }}
+              />
+            </div>
+          )}
+
+          {/* Result overlay */}
+          {(result === 'success' || result === 'warning' || result === 'error') && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-10 gap-3">
+              <span className="qr-result-icon" style={{ fontSize: '72px', lineHeight: 1 }}>
+                {result === 'success' ? '✅' : result === 'warning' ? '⚠️' : '❌'}
+              </span>
+              {attendeeName && (
+                <p className="font-syne font-bold text-white text-lg text-center px-4 leading-tight">
+                  {attendeeName}
+                </p>
+              )}
+              <p
+                className="font-dm text-sm font-semibold"
+                style={{
+                  color:
+                    result === 'success' ? '#00b894' :
+                    result === 'warning' ? '#fdcb6e' : '#e17055',
+                }}
+              >
+                {result === 'success' ? 'Checked in!' :
+                 result === 'warning' ? 'Already checked in' : 'Invalid QR code'}
+              </p>
+            </div>
+          )}
+
+          {/* Camera error */}
+          {cameraErr && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0a0f] z-20 gap-4 p-6">
+              <span className="text-5xl">📷</span>
+              <div className="text-center">
+                <p className="font-syne font-bold text-[#f0f0ff] mb-1">Camera Blocked</p>
+                <p className="font-dm text-xs text-[#8888aa] leading-relaxed">{cameraErr}</p>
+              </div>
               <button
                 onClick={startCamera}
-                className="px-6 py-2.5 rounded-full font-dm text-sm font-semibold text-white"
+                className="px-5 py-2.5 rounded-full font-dm text-sm font-semibold text-white"
                 style={{ background: 'linear-gradient(135deg, #6c5ce7, #a29bfe)' }}
               >
                 Retry
               </button>
             </div>
+          )}
+        </div>
+
+        {/* ── 3 result cards ───────────────────────────────────────────── */}
+        <div className="w-full shrink-0" style={{ maxWidth: '400px' }}>
+          <div className="grid grid-cols-3 gap-3">
+            {cards.map((card) => {
+              const isActive = result === card.id
+              return (
+                <div
+                  key={card.id}
+                  className="flex flex-col items-center justify-center gap-2 rounded-2xl py-4 px-2 transition-all duration-300"
+                  style={{
+                    background: isActive ? card.bg : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${isActive ? card.border : 'rgba(255,255,255,0.06)'}`,
+                    boxShadow: isActive ? `0 0 20px ${card.glow}` : 'none',
+                    transform: isActive ? 'translateY(-2px) scale(1.04)' : 'none',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '28px',
+                      lineHeight: 1,
+                      filter: isActive ? 'none' : 'grayscale(0.8) opacity(0.3)',
+                      transition: 'filter 0.3s',
+                      animation: isActive ? 'popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards' : 'none',
+                    }}
+                  >
+                    {card.icon}
+                  </span>
+                  <span
+                    className="font-dm text-xs font-semibold text-center"
+                    style={{ color: isActive ? card.color : '#555570', transition: 'color 0.3s' }}
+                  >
+                    {card.label}
+                  </span>
+                  {isActive && attendeeName && (
+                    <span
+                      className="font-dm text-[10px] text-center leading-tight px-1 font-medium"
+                      style={{ color: card.color }}
+                    >
+                      {attendeeName.split(' ')[0]}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
           </div>
-        )}
+        </div>
+
       </div>
 
-      {/* ── Bottom — 3 result cards ──────────────────────────────────────── */}
+      {/* ── Bottom close button ──────────────────────────────────────────── */}
       <div
-        className="shrink-0 px-4 pt-4 pb-6"
+        className="shrink-0 px-4 pb-6 pt-3"
         style={{
-          background: 'rgba(10,10,15,0.97)',
-          borderTop: '1px solid rgba(255,255,255,0.07)',
+          background: 'rgba(13,13,24,0.95)',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          backdropFilter: 'blur(20px)',
         }}
       >
-        {/* Hint text */}
-        <p className="font-dm text-xs text-[#8888aa] text-center mb-3">
-          Scan result will appear below
-        </p>
-
-        {/* 3 cards */}
-        <div className="grid grid-cols-3 gap-3">
-          {cards.map((card) => {
-            const isActive = result === card.id
-            return (
-              <div
-                key={card.id}
-                className="flex flex-col items-center justify-center gap-1.5 rounded-2xl py-4 px-2 transition-all duration-300"
-                style={{
-                  background: isActive ? card.bg : 'rgba(255,255,255,0.03)',
-                  border: `1px solid ${isActive ? card.border : 'rgba(255,255,255,0.07)'}`,
-                  boxShadow: isActive ? `0 0 24px ${card.shadow}` : 'none',
-                  transform: isActive ? 'scale(1.04)' : 'scale(1)',
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: '32px',
-                    lineHeight: 1,
-                    filter: isActive ? 'none' : 'grayscale(0.7) opacity(0.35)',
-                    transition: 'filter 0.3s ease',
-                    animation: isActive ? 'popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards' : 'none',
-                  }}
-                >
-                  {card.icon}
-                </span>
-                <span
-                  className="font-dm text-xs font-semibold text-center"
-                  style={{
-                    color: isActive ? card.color : '#8888aa',
-                    transition: 'color 0.3s ease',
-                  }}
-                >
-                  {card.label}
-                </span>
-                {/* Active name under card */}
-                {isActive && attendeeName && (
-                  <span className="font-dm text-[10px] text-center leading-tight px-1" style={{ color: card.color }}>
-                    {attendeeName.split(' ')[0]}
-                  </span>
-                )}
-              </div>
-            )
-          })}
-        </div>
+        <button
+          onClick={() => { stopCamera(); router.push('/admin/dashboard') }}
+          className="w-full py-3.5 rounded-2xl font-dm font-semibold text-sm text-center transition-all duration-200 hover:text-white active:scale-[0.98]"
+          style={{
+            color: '#8888aa',
+            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'rgba(255,255,255,0.04)',
+            maxWidth: '400px',
+            margin: '0 auto',
+            display: 'block',
+          }}
+        >
+          Close Scanner
+        </button>
       </div>
     </div>
   )
