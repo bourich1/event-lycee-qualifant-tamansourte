@@ -116,8 +116,13 @@ export default function AdminDashboard() {
   const handleScanResult = (result: { type: 'success' | 'warning' | 'error'; message: string }) => {
     addToast(result.type, result.message)
     if (result.type === 'success') {
-      fetchAttendees() // Refresh table on successful check-in
+      fetchAttendees()
     }
+  }
+
+  const handleDeleteAttendee = (id: string) => {
+    setAttendees((prev) => prev.filter((a) => a.id !== id))
+    addToast('success', 'Attendee deleted successfully')
   }
 
   if (loading) {
@@ -188,8 +193,8 @@ export default function AdminDashboard() {
         {/* Stats */}
         <StatsBar attendees={attendees} />
 
-        {/* Attendee table — full width now that scanner is in navbar */}
-        <AttendeeTable attendees={attendees} />
+        {/* Attendee table */}
+        <AttendeeTable attendees={attendees} onDelete={handleDeleteAttendee} />
       </div>
 
       {/* Toast stack */}
