@@ -28,16 +28,48 @@ function playSound(type: 'success' | 'warning' | 'error') {
 }
 
 // ─── jsQR Decoder ─────────────────────────────────────────────────────────────
+let jsQRModule: any = null
+
+async function getJsQR() {
+  if (jsQRModule) return jsQRModule
+  try {
+    const mod = await import('jsqr')
+    jsQRModule = mod.default || mod
+    return jsQRModule
+  } catch (err) {
+    console.error('Failed to load jsqr:', err)
+    return null
+  }
+}
+
 async function decodeFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement): Promise<string | null> {
   if (video.videoWidth === 0 || video.readyState < 2) return null
-  canvas.width  = video.videoWidth
-  canvas.height = video.videoHeight
+  
+  const scanner = await getJsQR()
+  if (!scanner) return null
+
+  // Use a fixed size for the decoding canvas to improve performance on mobile
+  // QR codes don't need high resolution to be decoded. 512px is a sweet spot.
+  const scanSize = 512
+  canvas.width  = scanSize
+  canvas.height = scanSize
+
   const ctx = canvas.getContext('2d', { willReadFrequently: true })
   if (!ctx) return null
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-  const img = ctx.getImageData(0, 0, canvas.width, canvas.height)
-  const jsQR = (await import('jsqr')).default
-  return jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' })?.data ?? null
+
+  // Calculate crop to use the center of the video feed (matching the UI)
+  const videoSize = Math.min(video.videoWidth, video.videoHeight)
+  const sx = (video.videoWidth - videoSize) / 2
+  const sy = (video.videoHeight - videoSize) / 2
+
+  ctx.drawImage(video, sx, sy, videoSize, videoSize, 0, 0, scanSize, scanSize)
+  
+  const img = ctx.getImageData(0, 0, scanSize, scanSize)
+  const code = scanner(img.data, img.width, img.height, {
+    inversionAttempts: 'attemptBoth', // Better for varying light conditions
+  })
+  
+  return code?.data ?? null
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -130,6 +162,8 @@ export default function ScanPage() {
   }, [handleQR])
 
   useEffect(() => {
+    // Pre-load the scanner library so the first scan is instant
+    getJsQR()
     startCamera()
     return () => stopCamera()
   }, [startCamera, stopCamera])
