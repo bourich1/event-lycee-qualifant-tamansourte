@@ -153,7 +153,7 @@ export default function AdminDashboard() {
 
       {/* ── Navbar ────────────────────────────────────────────────────────────── */}
       <nav
-        className="sticky top-0 z-40 px-4 sm:px-6 py-3 flex items-center justify-between"
+        className="sticky top-0 z-40 px-4 sm:px-6 py-2.5 flex items-center justify-between"
         style={{
           background: 'rgba(10,10,15,0.95)',
           backdropFilter: 'blur(20px)',
@@ -225,7 +225,7 @@ export default function AdminDashboard() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className="flex items-center gap-2 px-5 py-3.5 font-dm font-semibold text-sm transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 font-dm font-semibold text-sm transition-all duration-200"
               style={{
                 color: activeTab === tab.id ? '#f0f0ff' : '#8888aa',
                 borderBottom: activeTab === tab.id ? '2px solid #6c5ce7' : '2px solid transparent',
@@ -253,7 +253,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* ── Page content ──────────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-5">
 
         {/* ══ USERS TAB ════════════════════════════════════════════════════════ */}
         {activeTab === 'users' && (
@@ -268,7 +268,7 @@ export default function AdminDashboard() {
           <div className="space-y-5">
 
             {/* ── 3 stat cards ──────────────────────────────────────────────── */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-3">
               {([
                 {
                   label: 'Checked In',
@@ -297,11 +297,11 @@ export default function AdminDashboard() {
               ] as const).map(s => (
                 <div
                   key={s.label}
-                  className="rounded-2xl p-4 sm:p-5 text-center transition-all duration-300 hover:-translate-y-0.5"
+                  className="rounded-2xl p-4 text-center transition-all duration-300 hover:-translate-y-0.5"
                   style={{ background: s.bg, border: `1px solid ${s.border}` }}
                 >
-                  <div className="text-2xl sm:text-3xl mb-2">{s.icon}</div>
-                  <p className="font-syne font-black text-2xl sm:text-3xl mb-1" style={{ color: s.color }}>
+                  <div className="text-xl sm:text-2xl mb-1">{s.icon}</div>
+                  <p className="font-syne font-black text-xl sm:text-2xl mb-0.5" style={{ color: s.color }}>
                     {s.value}
                   </p>
                   <p className="font-dm text-xs font-medium" style={{ color: s.color }}>{s.label}</p>
@@ -311,7 +311,7 @@ export default function AdminDashboard() {
 
             {/* ── Entry progress bar ────────────────────────────────────────── */}
             <div
-              className="rounded-2xl p-5"
+              className="rounded-2xl p-4"
               style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.06)' }}
             >
               <div className="flex items-center justify-between mb-3">
@@ -336,7 +336,7 @@ export default function AdminDashboard() {
 
             {/* ── Open scanner CTA ──────────────────────────────────────────── */}
             <div
-              className="rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-5 relative overflow-hidden"
+              className="rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center gap-4 relative overflow-hidden"
               style={{
                 background: 'linear-gradient(135deg, rgba(108,92,231,0.15), rgba(162,155,254,0.08))',
                 border: '1px solid rgba(108,92,231,0.3)',
@@ -400,7 +400,7 @@ export default function AdminDashboard() {
                   {recentlyCheckedIn.map(attendee => (
                     <div
                       key={attendee.id}
-                      className="flex items-center gap-4 px-5 py-3.5 hover:bg-white/[0.02] transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/[0.02] transition-colors"
                     >
                       {/* Avatar */}
                       <div

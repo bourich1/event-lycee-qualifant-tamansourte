@@ -71,12 +71,12 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
       style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-[320px] flex flex-col gap-3 animate-scaleIn">
+      <div className="w-full max-w-[300px] flex flex-col gap-3 animate-scaleIn">
         
         {/* Pass Card Container */}
         <div
           ref={passRef}
-          className="relative w-full rounded-[28px] shadow-2xl flex flex-col pt-6 pb-6 px-5 border border-white/5"
+          className="relative w-full rounded-[28px] shadow-2xl flex flex-col py-5 px-4 border border-white/5"
           style={{ background: bgGradient }}
         >
           {/* Top Row: Event Info + Download Icon */}
@@ -85,7 +85,7 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
               <span className="font-dm text-[8px] tracking-widest text-white/50 font-bold uppercase mb-1">
                 Event Pass
               </span>
-              <h2 className="font-syne font-black text-[18px] text-white leading-tight uppercase">
+              <h2 className="font-syne font-black text-[16px] text-white leading-tight uppercase">
                 TAMANSOURTE<br/>2026
               </h2>
             </div>
@@ -105,8 +105,8 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
           </div>
 
           {/* User Name flexible to fit entirely */}
-          <div className="mb-5 w-full">
-            <h1 className="font-syne font-black text-[28px] text-white uppercase text-left leading-none break-words">
+          <div className="mb-4 w-full">
+            <h1 className="font-syne font-black text-[24px] text-white uppercase text-left leading-none break-words">
               {name}
             </h1>
           </div>
@@ -135,11 +135,11 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
           </div>
 
           {/* Unique ID below QR placed centrally */}
-          <div className="flex flex-col items-center mb-6 w-full">
+          <div className="flex flex-col items-center mb-5 w-full">
             <span className="font-dm text-[8px] tracking-[0.2em] text-white/50 uppercase font-bold mb-1">
               Unique ID
             </span>
-            <span className="font-mono text-[22px] text-[#5da9e9] font-black tracking-widest drop-shadow-sm">
+            <span className="font-mono text-[20px] text-[#5da9e9] font-black tracking-widest drop-shadow-sm">
               {shortId}
             </span>
           </div>
@@ -169,7 +169,7 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
         {/* Close Button below pass */}
         <button
           onClick={onClose}
-          className="w-full bg-[#13131a] text-white font-dm font-semibold text-sm py-[14px] rounded-[14px] border border-white/5 transition-all hover:bg-white/5 shadow-xl"
+          className="w-full bg-[#13131a] text-white font-dm font-semibold text-sm py-[12px] rounded-[12px] border border-white/5 transition-all hover:bg-white/5 shadow-xl hover:scale-[1.02]"
         >
           Close Scanner
         </button>

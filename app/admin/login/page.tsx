@@ -40,9 +40,9 @@ export default function AdminLoginPage() {
         <div className="absolute inset-0 grid-bg opacity-20" />
       </div>
 
-      <div className="w-full max-w-sm relative">
+      <div className="w-full max-w-[360px] relative">
         {/* Logo */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <div
             className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-5 font-syne font-black text-xl text-white"
             style={{
@@ -58,14 +58,14 @@ export default function AdminLoginPage() {
 
         {/* Card */}
         <div
-          className="rounded-3xl p-8"
+          className="rounded-3xl p-6"
           style={{
             background: '#13131a',
             border: '1px solid rgba(255,255,255,0.08)',
-            boxShadow: '0 40px 80px rgba(0,0,0,0.4)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
           }}
         >
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block font-dm text-sm text-[#8888aa] mb-2 font-medium">Email</label>
               <input

@@ -114,9 +114,9 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
 
         {/* Badge */}
-        <div className="animate-fadeUp-delay-1 flex justify-center mb-6">
+        <div className="animate-slideUp-delay-1 flex justify-center mb-5">
           <span
-            className="px-5 py-2 rounded-full text-sm font-dm font-medium"
+            className="px-4 py-1.5 rounded-full text-xs font-dm font-semibold uppercase tracking-wider"
             style={{
               background: 'rgba(108,92,231,0.12)',
               border: '1px solid rgba(108,92,231,0.35)',
@@ -128,9 +128,9 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
         </div>
 
         {/* Main heading */}
-        <h1 className="animate-fadeUp-delay-2 font-syne font-black leading-tight mb-6">
+        <h1 className="animate-slideUp-delay-2 font-syne font-black leading-tight mb-4">
           <span
-            className="block text-5xl md:text-7xl lg:text-8xl"
+            className="block text-4xl md:text-6xl lg:text-7xl"
             style={{
               background:
                 'linear-gradient(135deg, #f0f0ff 0%, #a29bfe 50%, #6c5ce7 100%)',
@@ -144,20 +144,20 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
         </h1>
 
         {/* Subtitle */}
-        <p className="animate-fadeUp-delay-3 font-dm text-lg md:text-xl text-[#8888aa] mb-10 max-w-2xl mx-auto leading-relaxed">
+        <p className="animate-slideUp-delay-3 font-dm text-base md:text-lg text-[#8888aa] mb-8 max-w-2xl mx-auto leading-relaxed">
           Welcome to the annual event of Tamansourte High School.
           Join hundreds of students for an unforgettable day of competitions,
           networking, and discovery.
         </p>
 
         {/* CTA Button */}
-        <div className="animate-fadeUp-delay-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button onClick={onGetPass} className="btn-primary text-lg px-10 py-4">
+        <div className="animate-slideUp-delay-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button onClick={onGetPass} className="btn-primary text-base px-8 py-3">
             Get My Pass 🎟️
           </button>
           <a
             href="/admin/dashboard"
-            className="px-8 py-4 rounded-full font-syne font-semibold text-[#a29bfe] hover:text-white transition-colors duration-200"
+            className="px-6 py-3 rounded-full font-syne font-semibold text-[#a29bfe] hover:text-white transition-colors duration-200 text-sm"
             style={{ border: '1px solid rgba(162,155,254,0.3)' }}
           >
             Dashboard →
@@ -165,7 +165,7 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
         </div>
 
         {/* Event info pills */}
-        <div className="animate-fadeUp-delay-4 flex flex-wrap items-center justify-center gap-4 mt-12">
+        <div className="animate-slideUp-delay-4 flex flex-wrap items-center justify-center gap-3 mt-10">
           {[
             { icon: '📅', text: 'EVENT DATE' },
             { icon: '📍', text: 'EVENT LOCATION' },

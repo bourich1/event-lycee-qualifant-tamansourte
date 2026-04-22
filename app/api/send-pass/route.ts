@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import QRCode from 'qrcode'
-import { resend } from '@/lib/resend'
+import { transporter } from '@/lib/mailer'
 
 export async function POST(req: NextRequest) {
   try {
@@ -114,22 +114,17 @@ export async function POST(req: NextRequest) {
 </html>
     `
 
-    // Send email via Resend
-    const { error: emailError } = await resend.emails.send({
-      from: 'Tamansourte High School <noreply@yourdomain.com>',
+    // Send email via Nodemailer
+    await transporter.sendMail({
+      from: `"Lycée Qualifiant Tamansourte" <${process.env.GMAIL_USER}>`,
       to: email,
-      subject: 'Your Event Pass is Ready 🎟️',
+      subject: '🎟️ Your Event Pass',
       html: htmlBody,
     })
-
-    if (emailError) {
-      console.error('Resend error:', emailError)
-      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
-    }
 
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('send-pass error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error or failed to send email' }, { status: 500 })
   }
 }

@@ -23,6 +23,7 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
   const [loadingSchools, setLoadingSchools] = useState(true)
   const [error, setError] = useState('')
   const [emailExists, setEmailExists] = useState(false)
+  const [isVerificationSent, setIsVerificationSent] = useState(false)
 
   useEffect(() => {
     const fetchSchools = async () => {
@@ -62,34 +63,26 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
     setLoading(true)
 
     try {
-      const qr_code = crypto.randomUUID()
-
-      const { error: insertError } = await supabase.from('attendees').insert({
-        full_name: fullName,
-        email: email,
-        school_id: schoolId || null,
-        qr_code,
+      const res = await fetch('/api/send-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: fullName,
+          email,
+          school_id: schoolId || null,
+        }),
       })
 
-      if (insertError) {
-        if (insertError.message.includes('unique') || insertError.code === '23505') {
-          setError('This email is already registered for this event.')
-        } else {
-          setError('An error occurred. Please try again.')
-        }
+      const data = await res.json()
+
+      if (!res.ok || data.error) {
+        setError(data.error || 'Failed to register. Please try again.')
         setLoading(false)
         return
       }
 
-      // Send pass email (non-blocking)
-      fetch('/api/send-pass', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ full_name: fullName, email, qr_code }),
-      }).catch(() => console.error('Email sending failed'))
-
-      const schoolName = schools.find((s) => s.id === schoolId)?.name || 'Tamansourte High School'
-      onSuccess(fullName, qr_code, email, schoolName)
+      // Show the check email state instead of calling onSuccess
+      setIsVerificationSent(true)
     } catch {
       setError('An unexpected error occurred.')
       setLoading(false)
@@ -105,11 +98,11 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="w-full max-w-md rounded-3xl p-8 relative animate-scaleIn transition-all duration-500"
+        className="w-full max-w-[400px] rounded-3xl p-6 relative animate-scaleIn transition-all duration-500"
         style={{
           background: '#13131a',
           border: `1px solid ${schoolThemeColor ? schoolThemeColor : 'rgba(255,255,255,0.1)'}`,
-          boxShadow: `0 40px 100px rgba(0,0,0,0.6), 0 0 80px ${schoolThemeColor ? schoolThemeColor + '40' : 'rgba(108,92,231,0.1)'}`,
+          boxShadow: `0 20px 60px rgba(0,0,0,0.5), 0 0 60px ${schoolThemeColor ? schoolThemeColor + '30' : 'rgba(108,92,231,0.08)'}`,
         }}
       >
         {schoolThemeColor && (
@@ -127,19 +120,38 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
           ✕
         </button>
 
-        <div className="mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-[#6c5ce7]/20 flex items-center justify-center text-2xl mb-4">
-            🎟️
+        {isVerificationSent ? (
+          <div className="text-center py-6 animate-fadeIn">
+            <div className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center text-3xl" style={{ background: 'rgba(108,92,231,0.15)', border: '1px solid rgba(108,92,231,0.3)' }}>
+              ✉️
+            </div>
+            <h3 className="font-syne font-black text-xl text-[#f0f0ff] mb-3">Check your email</h3>
+            <p className="font-dm text-[#8888aa] text-sm leading-relaxed mb-8">
+              We've sent a verification link to <strong className="text-white">{email}</strong>.<br/><br/>
+              Please click the link in the email to confirm your registration and receive your digital QR pass.
+            </p>
+            <button
+              onClick={onClose}
+              className="w-full bg-[#13131a] text-white font-dm font-semibold text-sm py-[12px] rounded-[12px] border border-white/10 transition-all hover:bg-white/5 shadow-xl hover:scale-[1.02]"
+            >
+              Close
+            </button>
           </div>
-          <h2 className="font-syne font-black text-2xl text-[#f0f0ff] mb-1">
-            Get My Pass
-          </h2>
-          <p className="font-dm text-sm text-[#8888aa]">
-            Fill in the form and receive your QR code by email.
-          </p>
-        </div>
+        ) : (
+          <>
+            <div className="mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-[#6c5ce7]/20 flex items-center justify-center text-2xl mb-4">
+                🎟️
+              </div>
+              <h2 className="font-syne font-black text-2xl text-[#f0f0ff] mb-1">
+                Get My Pass
+              </h2>
+              <p className="font-dm text-sm text-[#8888aa]">
+                Fill in the form to register and receive your QR code.
+              </p>
+            </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
           {/* Full Name */}
           <div>
             <label className="block font-dm text-sm text-[#8888aa] mb-2 font-medium">
@@ -264,9 +276,11 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
           </button>
         </form>
 
-        <p className="text-center font-dm text-xs text-[#8888aa] mt-5">
-          Your pass will be sent to the email address provided.
-        </p>
+            <p className="text-center font-dm text-xs text-[#8888aa] mt-5">
+              Your pass will be sent after you verify your email address.
+            </p>
+          </>
+        )}
       </div>
     </div>
   )

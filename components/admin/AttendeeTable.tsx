@@ -203,7 +203,7 @@ export default function AttendeeTable({ attendees, onDelete }: AttendeeTableProp
         style={{ border: '1px solid rgba(255,255,255,0.06)', background: '#13131a' }}
       >
         {/* Header */}
-        <div className="p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between border-b border-white/[0.06]">
+        <div className="p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between border-b border-white/[0.06]">
           <h2 className="font-syne font-bold text-lg text-[#f0f0ff]">
             Attendees ({filtered.length})
           </h2>
@@ -248,7 +248,7 @@ export default function AttendeeTable({ attendees, onDelete }: AttendeeTableProp
                   {['Name', 'Email', 'School', 'Status', 'Registered At', ''].map((col) => (
                     <th
                       key={col}
-                      className="px-5 py-3.5 text-left font-dm text-xs font-semibold text-[#8888aa] uppercase tracking-wider"
+                      className="px-4 py-2.5 text-left font-dm text-[11px] font-semibold text-[#8888aa] uppercase tracking-wider"
                       style={{ whiteSpace: 'nowrap' }}
                     >
                       {col}
@@ -266,22 +266,22 @@ export default function AttendeeTable({ attendees, onDelete }: AttendeeTableProp
                     }}
                   >
                     {/* Name */}
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <span className="font-dm font-medium text-[#f0f0ff]">{attendee.full_name}</span>
                     </td>
 
                     {/* Email */}
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <span className="font-dm text-sm text-[#8888aa]">{attendee.email}</span>
                     </td>
 
                     {/* School */}
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <span className="font-dm text-sm text-[#8888aa]">{attendee.schools?.name ?? '—'}</span>
                     </td>
 
                     {/* Status */}
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       {attendee.checked_in ? (
                         <span
                           className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-dm font-semibold"
@@ -308,12 +308,12 @@ export default function AttendeeTable({ attendees, onDelete }: AttendeeTableProp
                     </td>
 
                     {/* Created At */}
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <span className="font-dm text-xs text-[#8888aa]">{formatDate(attendee.created_at)}</span>
                     </td>
 
                     {/* Delete button */}
-                    <td className="px-3 py-4">
+                    <td className="px-3 py-3">
                       <button
                         onClick={() => { setConfirmTarget(attendee); setDeleteError('') }}
                         title="Delete attendee"
