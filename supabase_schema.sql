@@ -73,3 +73,22 @@ insert into schools (name) values
   ('Lycée Qualifiant Ibn Rochd'),
   ('Lycée Qualifiant Hassan II'),
   ('Lycée Qualifiant Mohammed VI');
+
+-- ================================================================
+-- Secure OTP Verification Table
+-- ================================================================
+create table otp_requests (
+  email text primary key,
+  hashed_otp text not null,
+  expires_at timestamp not null,
+  attempts integer default 0,
+  last_requested_at timestamp not null,
+  user_data jsonb not null
+);
+
+alter table otp_requests enable row level security;
+-- Allow anonymous/public insert/update/select for the API
+create policy "Public can read/write otp_requests"
+  on otp_requests for all
+  using (true)
+  with check (true);
