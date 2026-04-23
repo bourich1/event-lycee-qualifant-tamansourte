@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Countdown from './Countdown'
+import Navbar from './Navbar'
 
 interface HeroSectionProps {
   onGetPass: () => void
@@ -110,8 +112,11 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
       {/* Grid */}
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none" />
 
+      {/* Navbar */}
+      <Navbar onRegister={onGetPass} />
+
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto pt-20">
 
         {/* Badge */}
         <div className="animate-slideUp-delay-1 flex justify-center mb-5">
@@ -128,9 +133,9 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
         </div>
 
         {/* Main heading */}
-        <h1 className="animate-slideUp-delay-2 font-syne font-black leading-tight mb-4">
+        <h1 className="animate-slideUp-delay-2 font-syne font-black leading-tight mb-2">
           <span
-            className="block text-4xl md:text-6xl lg:text-7xl"
+            className="block text-3xl md:text-5xl lg:text-6xl"
             style={{
               background:
                 'linear-gradient(135deg, #f0f0ff 0%, #a29bfe 50%, #6c5ce7 100%)',
@@ -139,36 +144,18 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
               backgroundClip: 'text',
             }}
           >
-            EVENT NAME
+            LQ TAMANSOURTE 2026
           </span>
         </h1>
 
-        {/* Subtitle */}
-        <p className="animate-slideUp-delay-3 font-dm text-base md:text-lg text-[#8888aa] mb-8 max-w-2xl mx-auto leading-relaxed">
-          Welcome to the annual event of Tamansourte High School.
-          Join hundreds of students for an unforgettable day of competitions,
-          networking, and discovery.
-        </p>
-
-        {/* CTA Button */}
-        <div className="animate-slideUp-delay-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button onClick={onGetPass} className="btn-primary text-base px-8 py-3">
-            Get My Pass 🎟️
-          </button>
-          <a
-            href="/admin/dashboard"
-            className="px-6 py-3 rounded-full font-syne font-semibold text-[#a29bfe] hover:text-white transition-colors duration-200 text-sm"
-            style={{ border: '1px solid rgba(162,155,254,0.3)' }}
-          >
-            Dashboard →
-          </a>
-        </div>
+        {/* Countdown Timer */}
+        <Countdown />
 
         {/* Event info pills */}
-        <div className="animate-slideUp-delay-4 flex flex-wrap items-center justify-center gap-3 mt-10">
+        <div className="animate-slideUp-delay-4 flex flex-wrap items-center justify-center gap-3 mt-8">
           {[
-            { icon: '📅', text: 'EVENT DATE' },
-            { icon: '📍', text: 'EVENT LOCATION' },
+            { icon: '📅', text: 'May 17, 2026' },
+            { icon: '📍', text: 'Grand Amphithéâtre' },
             { icon: '🎓', text: 'All levels' },
           ].map((item) => (
             <div
@@ -187,7 +174,7 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
         <span className="text-[#8888aa] text-xs font-dm tracking-widest uppercase">
           Scroll
         </span>

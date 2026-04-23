@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
           <tr>
             <td style="background:linear-gradient(135deg,#1a1a2e,#13131a);border-radius:24px 24px 0 0;padding:40px;text-align:center;border:1px solid rgba(255,255,255,0.08);border-bottom:none;">
               <div style="display:inline-block;width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#6c5ce7,#a29bfe);line-height:70px;font-size:28px;font-weight:900;color:white;font-family:Georgia,serif;margin-bottom:20px;">LQ</div>
-              <h1 style="margin:0;font-size:28px;font-weight:800;color:#f0f0ff;letter-spacing:-0.5px;">EVENT NAME</h1>
-              <p style="margin:8px 0 0;font-size:14px;color:#8888aa;">Tamansourte High School</p>
+              <h1 style="margin:0;font-size:28px;font-weight:800;color:#f0f0ff;letter-spacing:-0.5px;">LQ TAMANSOURTE 2026</h1>
+              <p style="margin:8px 0 0;font-size:14px;color:#8888aa;">Lycée Qualifiant Tamansourte</p>
             </td>
           </tr>
 
@@ -48,10 +48,10 @@ export async function POST(req: NextRequest) {
           <tr>
             <td style="background:#13131a;padding:40px;border-left:1px solid rgba(255,255,255,0.08);border-right:1px solid rgba(255,255,255,0.08);">
               
-              <p style="margin:0 0 24px;font-size:16px;color:#8888aa;">Hello <strong style="color:#f0f0ff;">${full_name}</strong>,</p>
+              <p style="margin:0 0 24px;font-size:16px;color:#8888aa;">Bonjour <strong style="color:#f0f0ff;">${full_name}</strong>,</p>
               <p style="margin:0 0 32px;font-size:15px;color:#8888aa;line-height:1.7;">
-                Your registration for the event has been confirmed. Here is your personal digital pass.
-                Please present the QR code below at the event entrance.
+                Votre inscription pour l'événement a été confirmée. Voici votre pass numérique personnel.
+                Veuillez présenter le code QR ci-dessous à l'entrée de l'événement.
               </p>
 
               <!-- Event Details -->
@@ -62,13 +62,13 @@ export async function POST(req: NextRequest) {
                       <tr>
                         <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
                           <span style="color:#8888aa;font-size:13px;">📅 Date</span>
-                          <span style="float:right;color:#f0f0ff;font-weight:600;font-size:14px;">EVENT DATE</span>
+                          <span style="float:right;color:#f0f0ff;font-weight:600;font-size:14px;">17 MAI 2026</span>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                          <span style="color:#8888aa;font-size:13px;">📍 Location</span>
-                          <span style="float:right;color:#f0f0ff;font-weight:600;font-size:14px;">EVENT LOCATION</span>
+                          <span style="color:#8888aa;font-size:13px;">📍 Lieu</span>
+                          <span style="float:right;color:#f0f0ff;font-weight:600;font-size:14px;">Grand Amphithéâtre</span>
                         </td>
                       </tr>
                       <tr>
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
               <div style="text-align:center;margin-bottom:32px;">
                 <p style="font-size:13px;color:#8888aa;margin:0 0 16px;text-transform:uppercase;letter-spacing:1px;">Your Access QR Code</p>
                 <div style="display:inline-block;padding:20px;background:#0a0a0f;border-radius:20px;border:2px solid rgba(108,92,231,0.4);box-shadow:0 0 40px rgba(108,92,231,0.2);">
-                  <img src="${qrDataUrl}" alt="QR Code" width="220" height="220" style="display:block;border-radius:8px;" />
+                  <img src="cid:qrcode" alt="QR Code" width="220" height="220" style="display:block;border-radius:8px;" />
                 </div>
                 <p style="margin:16px 0 0;font-size:11px;color:#8888aa;font-family:monospace;letter-spacing:0.5px;">${qr_code}</p>
               </div>
@@ -114,12 +114,19 @@ export async function POST(req: NextRequest) {
 </html>
     `
 
-    // Send email via Nodemailer
+    // Send email via Nodemailer with QR code as attachment
     await transporter.sendMail({
       from: `"Lycée Qualifiant Tamansourte" <${process.env.GMAIL_USER}>`,
       to: email,
       subject: '🎟️ Your Event Pass',
       html: htmlBody,
+      attachments: [
+        {
+          filename: 'qrcode.png',
+          path: qrDataUrl,
+          cid: 'qrcode' // same as in the html img src
+        }
+      ]
     })
 
     return NextResponse.json({ success: true })
