@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
@@ -161,11 +162,13 @@ export default function AdminDashboard() {
         }}
       >
         <div className="flex items-center gap-3">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center font-syne font-black text-sm text-white shrink-0"
-            style={{ background: 'linear-gradient(135deg, #6c5ce7, #a29bfe)' }}
-          >
-            LQ
+          <div className="relative w-16 h-16 shrink-0">
+            <Image
+              src="/lycee-logo.png"
+              alt="LQ Tamansourte Logo"
+              fill
+              className="object-contain"
+            />
           </div>
           <div>
             <h1 className="font-syne font-bold text-sm text-[#f0f0ff] leading-none">

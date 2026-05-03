@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 
 interface NavbarProps {
@@ -13,12 +14,14 @@ export default function Navbar({ onRegister }: NavbarProps) {
     <>
       <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 md:px-12 py-4 backdrop-blur-md border-b border-white/5 bg-[#0a0a0f]/40">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6c5ce7] to-[#a29bfe] flex items-center justify-center font-syne font-black text-white text-xs">
-            LQ
+          <div className="relative w-20 h-20">
+            <Image
+              src="/lycee-logo.png"
+              alt="LQ Tamansourte Logo"
+              fill
+              className="object-contain"
+            />
           </div>
-          <span className="font-syne font-bold text-sm tracking-tight text-white hidden sm:block">
-            TAMANSOURTE
-          </span>
         </div>
 
         {/* Desktop Menu */}

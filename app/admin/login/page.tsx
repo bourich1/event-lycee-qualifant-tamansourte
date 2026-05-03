@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
@@ -43,14 +44,13 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-[360px] relative">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div
-            className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-5 font-syne font-black text-xl text-white"
-            style={{
-              background: 'linear-gradient(135deg, #6c5ce7, #a29bfe)',
-              boxShadow: '0 0 40px rgba(108,92,231,0.4)',
-            }}
-          >
-            LQ
+          <div className="relative w-24 h-24 mx-auto mb-5">
+            <Image
+              src="/lycee-logo.png"
+              alt="LQ Tamansourte Logo"
+              fill
+              className="object-contain"
+            />
           </div>
           <h1 className="font-syne font-black text-2xl text-[#f0f0ff] mb-1">Administration</h1>
           <p className="font-dm text-sm text-[#8888aa]">Restricted access — administrators only</p>

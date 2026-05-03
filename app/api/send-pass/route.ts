@@ -1,3 +1,5 @@
+import path from 'path'
+import fs from 'fs'
 import { NextRequest, NextResponse } from 'next/server'
 import QRCode from 'qrcode'
 import { transporter } from '@/lib/mailer'
@@ -9,6 +11,9 @@ export async function POST(req: NextRequest) {
     if (!full_name || !email || !qr_code) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
+
+    // Path to logo
+    const logoPath = path.join(process.cwd(), 'public', 'lycee-logo.png')
 
     // Generate QR code as base64 PNG
     const qrDataUrl = await QRCode.toDataURL(qr_code, {
@@ -38,7 +43,9 @@ export async function POST(req: NextRequest) {
           <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#1a1a2e,#13131a);border-radius:24px 24px 0 0;padding:40px;text-align:center;border:1px solid rgba(255,255,255,0.08);border-bottom:none;">
-              <div style="display:inline-block;width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#6c5ce7,#a29bfe);line-height:70px;font-size:28px;font-weight:900;color:white;font-family:Georgia,serif;margin-bottom:20px;">LQ</div>
+              <div style="display:inline-block;margin-bottom:20px;">
+                <img src="cid:logo" alt="Logo" width="70" height="70" style="display:block;border-radius:12px;" />
+              </div>
               <h1 style="margin:0;font-size:28px;font-weight:800;color:#f0f0ff;letter-spacing:-0.5px;">LQ TAMANSOURTE 2026</h1>
               <p style="margin:8px 0 0;font-size:14px;color:#8888aa;">Lycée Qualifiant Tamansourte</p>
             </td>
@@ -114,7 +121,7 @@ export async function POST(req: NextRequest) {
 </html>
     `
 
-    // Send email via Nodemailer with QR code as attachment
+    // Send email via Nodemailer with QR code and logo as attachments
     await transporter.sendMail({
       from: `"Lycée Qualifiant Tamansourte" <${process.env.GMAIL_USER}>`,
       to: email,
@@ -125,6 +132,11 @@ export async function POST(req: NextRequest) {
           filename: 'qrcode.png',
           path: qrDataUrl,
           cid: 'qrcode' // same as in the html img src
+        },
+        {
+          filename: 'logo.png',
+          path: logoPath,
+          cid: 'logo' // same as in the html img src
         }
       ]
     })

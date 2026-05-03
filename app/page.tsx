@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import HeroSection from '@/components/HeroSection'
 import RegisterForm from '@/components/RegisterForm'
 import PassSuccessModal from '@/components/PassSuccessModal'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 export default function HomePage() {
   const [showRegisterForm, setShowRegisterForm] = useState(false)
@@ -22,6 +24,14 @@ export default function HomePage() {
     setShowSuccess(true)
   }
 
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: false,
+      easing: 'ease-out-quad',
+    })
+  }, [])
+
   return (
     <main className="min-h-screen bg-[#0a0a0f] overflow-x-hidden">
       <HeroSection onGetPass={() => setShowRegisterForm(true)} />
@@ -31,7 +41,7 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto">
 
           {/* Section header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-12" data-aos="fade-up">
             <span className="inline-block px-4 py-1 rounded-full bg-[#6c5ce7]/10 border border-[#6c5ce7]/30 text-[#a29bfe] text-xs font-bold font-dm mb-4 tracking-wider uppercase">
               About the Event
             </span>
@@ -64,10 +74,12 @@ export default function HomePage() {
                 description:
                   'Benefit from workshops and talks hosted by professionals to enhance your skills.',
               },
-            ].map((card) => (
+            ].map((card, index) => (
               <div
                 key={card.title}
                 className="bg-[#13131a] border border-white/[0.08] rounded-2xl p-6 hover:border-[#6c5ce7]/40 transition-all duration-300 group hover:-translate-y-1"
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
               >
                 <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">
                   {card.icon}
@@ -83,7 +95,7 @@ export default function HomePage() {
           </div>
 
           {/* Bottom CTA */}
-          <div className="relative bg-gradient-to-r from-[#13131a] via-[#1a1a2e] to-[#13131a] border border-white/[0.08] rounded-3xl p-8 text-center overflow-hidden">
+          <div className="relative bg-gradient-to-r from-[#13131a] via-[#1a1a2e] to-[#13131a] border border-white/[0.08] rounded-3xl p-8 text-center overflow-hidden" data-aos="zoom-in">
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-64 h-32 bg-[#6c5ce7]/10 blur-3xl rounded-full" />
             </div>

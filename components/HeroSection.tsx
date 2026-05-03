@@ -119,7 +119,7 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto pt-20">
 
         {/* Badge */}
-        <div className="animate-slideUp-delay-1 flex justify-center mb-5">
+        <div className="flex justify-center mb-5" data-aos="fade-down" data-aos-delay="200">
           <span
             className="px-4 py-1.5 rounded-full text-xs font-dm font-semibold uppercase tracking-wider"
             style={{
@@ -133,7 +133,7 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
         </div>
 
         {/* Main heading */}
-        <h1 className="animate-slideUp-delay-2 font-syne font-black leading-tight mb-2">
+        <h1 className="font-syne font-black leading-tight mb-2" data-aos="fade-up" data-aos-delay="400">
           <span
             className="block text-3xl md:text-5xl lg:text-6xl"
             style={{
@@ -149,10 +149,12 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
         </h1>
 
         {/* Countdown Timer */}
-        <Countdown />
+        <div data-aos="zoom-in" data-aos-delay="600">
+          <Countdown />
+        </div>
 
         {/* Event info pills */}
-        <div className="animate-slideUp-delay-4 flex flex-wrap items-center justify-center gap-3 mt-8">
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-8" data-aos="fade-up" data-aos-delay="800">
           {[
             { icon: '📅', text: 'May 17, 2026' },
             { icon: '📍', text: 'Grand Amphithéâtre' },

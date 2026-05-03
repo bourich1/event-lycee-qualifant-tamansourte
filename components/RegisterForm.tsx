@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { getSchoolGradient, getSchoolColor } from '@/lib/theme'
@@ -327,9 +328,16 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
               <div className="flex justify-between items-start mb-4">
                 <div className="flex flex-col">
                   <span className="font-dm text-[6px] tracking-widest text-white/50 font-bold uppercase mb-0.5">Event Pass</span>
-                  <h2 className="font-syne font-black text-[16px] text-white leading-tight uppercase text-left">LQ<br/>TAMANSOURTE<br/>2026</h2>
+                  <h2 className="font-syne font-black text-[14px] text-white leading-tight uppercase text-left">TAMANSOURTE<br/>2026</h2>
                 </div>
-                <div className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[8px] text-white/30 font-black">LQ</div>
+                <div className="relative w-8 h-8">
+                  <Image
+                    src="/lycee-logo.png"
+                    alt="Logo"
+                    fill
+                    className="object-contain brightness-0 invert opacity-50"
+                  />
+                </div>
               </div>
 
               <div className="mt-auto mb-3">
