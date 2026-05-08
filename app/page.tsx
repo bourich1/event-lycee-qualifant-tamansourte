@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import HeroSection from '@/components/HeroSection'
 import RegisterForm from '@/components/RegisterForm'
 import PassSuccessModal from '@/components/PassSuccessModal'
+import CircularGallery from '@/components/CircularGallery/CircularGallery'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
@@ -35,6 +36,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#0a0a0f] overflow-x-hidden">
       <HeroSection onGetPass={() => setShowRegisterForm(true)} />
+
 
       {/* About Section */}
       <section id="about" className="relative py-16 md:py-20 px-6">
