@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
 
     // Send email via Nodemailer with QR code and logo as attachments
     await transporter.sendMail({
-      from: `"Lycée Qualifiant Tamansourte" <${process.env.GMAIL_USER}>`,
+      from: `"ITSS TS Officiel" <${process.env.GMAIL_USER}>`,
       to: email,
       subject: '🎟️ Your Event Pass',
       html: htmlBody,

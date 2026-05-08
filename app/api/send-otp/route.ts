@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     `
 
     await transporter.sendMail({
-      from: `"Lycée Qualifiant Tamansourte" <${process.env.GMAIL_USER}>`,
+      from: `"ITSS TS Officiel" <${process.env.GMAIL_USER}>`,
       to: email,
       subject: `${otp} is your verification code`,
       html: htmlBody,
