@@ -71,8 +71,15 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
       style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-[300px] flex flex-col gap-3 animate-scaleIn">
-        
+      <div className="w-full max-w-[300px] flex flex-col gap-3 animate-scaleIn relative">
+        {/* Absolute Close Button (X) */}
+        <button
+          onClick={onClose}
+          className="absolute -top-10 right-0 w-8 h-8 rounded-full flex items-center justify-center text-[#8888aa] hover:text-white hover:bg-white/10 transition-all duration-200 z-50"
+        >
+          ✕
+        </button>
+
         {/* Pass Card Container */}
         <div
           ref={passRef}
@@ -106,7 +113,7 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
 
           {/* User Name flexible to fit entirely */}
           <div className="mb-4 w-full">
-            <h1 className="font-syne font-black text-[24px] text-white uppercase text-left leading-none break-words">
+            <h1 className="font-syne font-black text-[24px] text-white uppercase text-center leading-none break-words">
               {name}
             </h1>
           </div>
@@ -166,13 +173,6 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
           </div>
         </div>
 
-        {/* Close Button below pass */}
-        <button
-          onClick={onClose}
-          className="w-full bg-[#13131a] text-white font-dm font-semibold text-sm py-[12px] rounded-[12px] border border-white/5 transition-all hover:bg-white/5 shadow-xl hover:scale-[1.02]"
-        >
-          Close Scanner
-        </button>
         
       </div>
     </div>

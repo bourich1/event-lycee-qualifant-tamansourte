@@ -139,12 +139,14 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
       return
     }
     const timer = setTimeout(async () => {
-      const { data } = await supabase
-        .from('attendees')
-        .select('email_verified')
-        .eq('email', email)
-        .maybeSingle()
-      setEmailExists(data ? data.email_verified : false)
+      try {
+        const res = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`)
+        const data = await res.json()
+        // Only mark as "exists" if they are fully verified
+        setEmailExists(data.exists && data.status === 'verified')
+      } catch (err) {
+        console.error('Email check failed:', err)
+      }
     }, 600)
     return () => clearTimeout(timer)
   }, [email])

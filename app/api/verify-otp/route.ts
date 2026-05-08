@@ -68,7 +68,10 @@ export async function POST(req: NextRequest) {
 
     if (insertError) {
       console.error('Failed to insert attendee:', insertError)
-      return NextResponse.json({ error: 'Failed to complete registration.' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'Failed to complete registration.',
+        details: insertError.message || 'Database insertion error'
+      }, { status: 500 })
     }
 
     // 6. Delete the OTP request
