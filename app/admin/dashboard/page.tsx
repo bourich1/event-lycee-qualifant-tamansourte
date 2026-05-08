@@ -54,7 +54,6 @@ export default function AdminDashboard() {
     const { data, error } = await supabase
       .from('attendees')
       .select('*, schools(name)')
-      .eq('email_verified', true)
       .order('created_at', { ascending: false })
     if (!error && data) setAttendees(data as Attendee[])
     setLoading(false)
@@ -78,34 +77,17 @@ export default function AdminDashboard() {
         { event: 'INSERT', schema: 'public', table: 'attendees' },
         (payload) => {
           const newAttendee = payload.new as Attendee
-          if (newAttendee.email_verified) {
-            setAttendees(prev => [newAttendee, ...prev])
-            addToast('success', `New registration: ${newAttendee.full_name}`)
-          }
+          setAttendees(prev => [newAttendee, ...prev])
+          addToast('success', `New registration: ${newAttendee.full_name}`)
         }
       )
       .on('postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'attendees' },
         (payload) => {
           const updatedAttendee = payload.new as Attendee
-          setAttendees(prev => {
-            const exists = prev.some(a => a.id === updatedAttendee.id)
-            if (exists) {
-              // If it somehow became unverified, remove it
-              if (!updatedAttendee.email_verified) {
-                return prev.filter(a => a.id !== updatedAttendee.id)
-              }
-              // Otherwise update existing
-              return prev.map(a => a.id === updatedAttendee.id ? { ...a, ...updatedAttendee } : a)
-            } else {
-              // If it just became verified, add it
-              if (updatedAttendee.email_verified) {
-                addToast('success', `New registration: ${updatedAttendee.full_name}`)
-                return [updatedAttendee, ...prev]
-              }
-              return prev
-            }
-          })
+          setAttendees(prev =>
+            prev.map(a => a.id === updatedAttendee.id ? { ...a, ...updatedAttendee } : a)
+          )
         }
       )
       .on('postgres_changes',

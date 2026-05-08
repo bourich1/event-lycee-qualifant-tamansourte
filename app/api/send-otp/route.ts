@@ -15,64 +15,54 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // 1. Check if email is already registered
-    const { data: existingAttendee } = await supabase
+    // 1. Check if email is already verified
+    const { data: verifiedAttendee } = await supabase
       .from('attendees')
-      .select('id, email_verified, verification_token')
+      .select('id')
+      .eq('email', email)
+      .eq('email_verified', true)
+      .maybeSingle()
+    
+    if (verifiedAttendee) {
+      return NextResponse.json({ error: 'This email is already registered.' }, { status: 400 })
+    }
+    // 2. Check otp_requests for cooldown
+    const { data: existingRequest } = await supabase
+      .from('otp_requests')
+      .select('*')
       .eq('email', email)
       .maybeSingle()
 
-    // If fully verified, stop.
-    if (existingAttendee && existingAttendee.email_verified) {
-      return NextResponse.json({ error: 'This email is already registered and verified.' }, { status: 400 })
-    }
-
-    // Check cooldown if unverified but exists
-    if (existingAttendee && existingAttendee.verification_token) {
-      const parts = existingAttendee.verification_token.split(':')
-      if (parts.length === 4) {
-        const lastRequestTime = parseInt(parts[3])
-        const secondsSinceLastRequest = (Date.now() - lastRequestTime) / 1000
-        if (secondsSinceLastRequest < OTP_COOLDOWN_SECONDS) {
-          return NextResponse.json({ 
-            error: `Please wait ${Math.ceil(OTP_COOLDOWN_SECONDS - secondsSinceLastRequest)} seconds before requesting a new code.` 
-          }, { status: 429 })
-        }
+    if (existingRequest) {
+      const lastRequestTime = new Date(existingRequest.last_requested_at).getTime()
+      const secondsSinceLastRequest = (Date.now() - lastRequestTime) / 1000
+      if (secondsSinceLastRequest < OTP_COOLDOWN_SECONDS) {
+        return NextResponse.json({ 
+          error: `Please wait ${Math.ceil(OTP_COOLDOWN_SECONDS - secondsSinceLastRequest)} seconds before requesting a new code.` 
+        }, { status: 429 })
       }
     }
 
-    // 2. Generate 6-digit OTP
+    // 3. Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
     const hashed_otp = crypto.createHash('sha256').update(otp).digest('hex')
-    const expires_at = Date.now() + OTP_EXPIRATION_MINUTES * 60000
-    const attempts = 0
-    const requestTime = Date.now()
+    const expires_at = new Date(Date.now() + OTP_EXPIRATION_MINUTES * 60000).toISOString()
+    const requestTime = new Date().toISOString()
     
-    // Store data in verification_token column format: "hashedOtp:expiresAt:attempts:lastRequestTime"
-    const tokenPayload = `${hashed_otp}:${expires_at}:${attempts}:${requestTime}`
-
-    if (existingAttendee) {
-      // Update existing unverified attendee
-      const { error: updateError } = await supabase.from('attendees').update({
+    // 4. Upsert into otp_requests
+    const { error: upsertError } = await supabase.from('otp_requests').upsert({
+      email,
+      hashed_otp,
+      expires_at,
+      last_requested_at: requestTime,
+      attempts: 0,
+      user_data: {
         full_name,
-        school_id: school_id || null,
-        verification_token: tokenPayload
-      }).eq('email', email)
+        school_id: school_id || null
+      }
+    })
 
-      if (updateError) throw updateError
-    } else {
-      // Insert new unverified attendee
-      const { error: insertError } = await supabase.from('attendees').insert({
-        full_name,
-        email,
-        school_id: school_id || null,
-        qr_code: crypto.randomUUID(), // Assign QR code now, show it later
-        email_verified: false,
-        verification_token: tokenPayload
-      })
-
-      if (insertError) throw insertError
-    }
+    if (upsertError) throw upsertError
 
     // 5. Send plain OTP via email (Nodemailer)
     const htmlBody = `
@@ -130,8 +120,11 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json({ success: true, message: 'OTP sent successfully' })
-  } catch (err) {
+  } catch (err: any) {
     console.error('send-otp error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Internal server error', 
+      details: err.message || 'Unknown error' 
+    }, { status: 500 })
   }
 }

@@ -13,36 +13,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // 1. Fetch the unverified attendee
-    const { data: attendee, error: fetchError } = await supabase
-      .from('attendees')
+    // 1. Fetch the pending request
+    const { data: request, error: fetchError } = await supabase
+      .from('otp_requests')
       .select('*')
       .eq('email', email)
       .maybeSingle()
 
-    if (fetchError || !attendee || attendee.email_verified || !attendee.verification_token) {
+    if (fetchError || !request) {
       return NextResponse.json({ error: 'No pending verification found for this email.' }, { status: 400 })
     }
 
-    // Decode token payload
-    const parts = attendee.verification_token.split(':')
-    if (parts.length !== 4) {
-      return NextResponse.json({ error: 'Invalid verification data.' }, { status: 400 })
-    }
-    
-    const [storedHashedOtp, expiresAtStr, attemptsStr, lastRequestStr] = parts
-    const expiresAt = parseInt(expiresAtStr)
-    const attempts = parseInt(attemptsStr)
+    const { hashed_otp: storedHashedOtp, expires_at, attempts, user_data } = request
+    const expiresAt = new Date(expires_at).getTime()
 
     // 2. Check if locked out
     if (attempts >= MAX_ATTEMPTS) {
-      await supabase.from('attendees').delete().eq('email', email)
+      await supabase.from('otp_requests').delete().eq('email', email)
       return NextResponse.json({ error: 'Too many failed attempts. Please request a new code.' }, { status: 400 })
     }
 
     // 3. Check expiration
     if (Date.now() > expiresAt) {
-      await supabase.from('attendees').delete().eq('email', email)
+      await supabase.from('otp_requests').delete().eq('email', email)
       return NextResponse.json({ error: 'Verification code has expired. Please request a new one.' }, { status: 400 })
     }
 
@@ -52,59 +45,67 @@ export async function POST(req: NextRequest) {
     if (hashedInputOtp !== storedHashedOtp) {
       const newAttempts = attempts + 1
       if (newAttempts >= MAX_ATTEMPTS) {
-        await supabase.from('attendees').delete().eq('email', email)
+        await supabase.from('otp_requests').delete().eq('email', email)
         return NextResponse.json({ error: 'Too many failed attempts. Please request a new code.' }, { status: 400 })
       } else {
-        const newToken = `${storedHashedOtp}:${expiresAt}:${newAttempts}:${lastRequestStr}`
-        await supabase.from('attendees').update({ verification_token: newToken }).eq('email', email)
-        
+        await supabase.from('otp_requests').update({ attempts: newAttempts }).eq('email', email)
         const remaining = MAX_ATTEMPTS - newAttempts
         return NextResponse.json({ error: `Invalid verification code. ${remaining} attempts remaining.` }, { status: 400 })
       }
     }
 
-    // 5. Code is VALID. Mark as verified!
-    const { error: verifyError } = await supabase.from('attendees').update({
-      email_verified: true,
-      verification_token: null
-    }).eq('email', email)
+    // 5. Code is VALID. Insert into attendees table!
+    const userData = user_data as { full_name: string, school_id: string | null }
+    const qr_code = crypto.randomUUID()
+    
+    const { data: newAttendee, error: insertError } = await supabase.from('attendees').insert({
+      full_name: userData.full_name,
+      email,
+      school_id: userData.school_id,
+      qr_code,
+      email_verified: true
+    }).select().single()
 
-    if (verifyError) {
-      console.error('Failed to verify attendee:', verifyError)
+    if (insertError) {
+      console.error('Failed to insert attendee:', insertError)
       return NextResponse.json({ error: 'Failed to complete registration.' }, { status: 500 })
     }
 
-    // 6. Get school name for the frontend response
+    // 6. Delete the OTP request
+    await supabase.from('otp_requests').delete().eq('email', email)
+
+    // 7. Get school name for response
     let schoolName = 'Tamansourte High School'
-    if (attendee.school_id) {
-      const { data: school } = await supabase.from('schools').select('name').eq('id', attendee.school_id).maybeSingle()
+    if (newAttendee.school_id) {
+      const { data: school } = await supabase.from('schools').select('name').eq('id', newAttendee.school_id).maybeSingle()
       if (school) schoolName = school.name
     }
 
-    // 7. Trigger pass email delivery in background
+    // 8. Trigger pass email delivery
     const baseUrl = new URL('/', req.url).toString().slice(0, -1)
     fetch(`${baseUrl}/api/send-pass`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        full_name: attendee.full_name,
-        email: attendee.email,
-        qr_code: attendee.qr_code,
+        full_name: newAttendee.full_name,
+        email: newAttendee.email,
+        qr_code: newAttendee.qr_code,
       }),
     }).catch(err => console.error('Failed to trigger send-pass:', err))
 
-    // 8. Return success data to frontend to show the pass
     return NextResponse.json({
       success: true,
       data: {
-        full_name: attendee.full_name,
-        qr_code: attendee.qr_code,
+        full_name: newAttendee.full_name,
+        qr_code: newAttendee.qr_code,
         school_name: schoolName,
       }
     })
-
-  } catch (err) {
+  } catch (err: any) {
     console.error('verify-otp error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Internal server error', 
+      details: err.message || 'Unknown error' 
+    }, { status: 500 })
   }
 }
