@@ -157,7 +157,7 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
         <div className="flex flex-wrap items-center justify-center gap-3 mt-8" data-aos="fade-up" data-aos-delay="800">
           {[
             { icon: '📅', text: 'May 17, 2026' },
-            { icon: '📍', text: 'Grand Amphithéâtre' },
+            { icon: '📍', text: 'lycée qualifiant tamansourt ' },
             { icon: '🎓', text: 'All levels' },
           ].map((item) => (
             <div

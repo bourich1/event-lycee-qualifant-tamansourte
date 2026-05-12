@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
                       <tr>
                         <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
                           <span style="color:#8888aa;font-size:13px;">📍 Lieu</span>
-                          <span style="float:right;color:#f0f0ff;font-weight:600;font-size:14px;">Grand Amphithéâtre</span>
+                          <span style="float:right;color:#f0f0ff;font-weight:600;font-size:14px;">lycée qualifiant tamansourt</span>
                         </td>
                       </tr>
                       <tr>
