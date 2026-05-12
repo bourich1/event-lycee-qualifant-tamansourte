@@ -315,7 +315,7 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
 
         {/* Pass Preview Column */}
         {!isVerificationSent && (
-          <div className="w-full md:w-[280px] shrink-0 animate-fadeIn order-1 md:order-2">
+          <div className="hidden md:block w-full md:w-[280px] shrink-0 animate-fadeIn order-1 md:order-2">
             <div className="mb-3 flex items-center gap-2 px-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#6c5ce7] animate-pulse"></span>
               <span className="text-[9px] font-dm font-bold text-white/40 uppercase tracking-[0.2em]">Preview</span>

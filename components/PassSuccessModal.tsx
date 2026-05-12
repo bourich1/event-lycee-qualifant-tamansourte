@@ -86,7 +86,7 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
           className="relative w-full rounded-[28px] shadow-2xl flex flex-col py-5 px-4 border border-white/5"
           style={{ background: bgGradient }}
         >
-          {/* Top Row: Event Info + Download Icon */}
+          {/* Top Row: Event Info + Download Icon & Logo */}
           <div className="flex justify-between items-start mb-4 w-full">
             <div className="flex flex-col">
               <span className="font-dm text-[8px] tracking-widest text-white/50 font-bold uppercase mb-1">
@@ -97,18 +97,29 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
               </h2>
             </div>
             
-            <button
-              onClick={handleDownload}
-              title="Download Pass"
-              disabled={!qrDataUrl}
-              className="w-10 h-10 rounded-[14px] flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors bg-white/5 shrink-0"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a29bfe" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/lycee-logo.png"
+                  alt="Logo"
+                  className="w-full h-full object-contain brightness-0 invert opacity-60"
+                />
+              </div>
+              <button
+                data-html2canvas-ignore="true"
+                onClick={handleDownload}
+                title="Download Pass"
+                disabled={!qrDataUrl}
+                className="w-10 h-10 rounded-[14px] flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors bg-white/5 shrink-0"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a29bfe" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* User Name flexible to fit entirely */}

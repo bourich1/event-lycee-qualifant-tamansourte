@@ -16,7 +16,7 @@ export default function Navbar({ onRegister }: NavbarProps) {
         <div className="flex items-center gap-2">
           <div className="relative w-20 h-20">
             <Image
-              src="/lycee-logo.png"
+              src="/logo-white.png"
               alt="LQ Tamansourte Logo"
               fill
               className="object-contain"

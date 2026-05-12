@@ -173,6 +173,16 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
             </div>
           ))}
         </div>
+
+        {/* Mobile Get Pass Button */}
+        <div className="mt-8 md:hidden flex justify-center w-full" data-aos="fade-up" data-aos-delay="1000">
+          <button 
+            onClick={onGetPass}
+            className="btn-primary w-full py-4 text-base font-bold shadow-lg shadow-[#6c5ce7]/20"
+          >
+            Get My Pass 🎟️
+          </button>
+        </div>
       </div>
 
       {/* Scroll indicator */}
