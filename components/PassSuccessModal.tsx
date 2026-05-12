@@ -101,7 +101,7 @@ export default function PassSuccessModal({ name, qrCode, email, schoolName, onCl
               <div className="relative w-10 h-10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/lycee-logo.png"
+                  src="/logo-white.png"
                   alt="Logo"
                   className="w-full h-full object-contain brightness-0 invert opacity-60"
                 />

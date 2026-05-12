@@ -86,15 +86,19 @@ export async function POST(req: NextRequest) {
 
     // 8. Trigger pass email delivery
     const baseUrl = new URL('/', req.url).toString().slice(0, -1)
-    fetch(`${baseUrl}/api/send-pass`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        full_name: newAttendee.full_name,
-        email: newAttendee.email,
-        qr_code: newAttendee.qr_code,
-      }),
-    }).catch(err => console.error('Failed to trigger send-pass:', err))
+    try {
+      await fetch(`${baseUrl}/api/send-pass`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: newAttendee.full_name,
+          email: newAttendee.email,
+          qr_code: newAttendee.qr_code,
+        }),
+      })
+    } catch (err) {
+      console.error('Failed to trigger send-pass:', err)
+    }
 
     return NextResponse.json({
       success: true,
