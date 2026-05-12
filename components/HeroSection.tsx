@@ -185,21 +185,7 @@ export default function HeroSection({ onGetPass }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-        <span className="text-[#8888aa] text-xs font-dm tracking-widest uppercase">
-          Scroll
-        </span>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M5 7l5 5 5-5"
-            stroke="rgba(136,136,170,0.6)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
+
     </section>
   )
 }
