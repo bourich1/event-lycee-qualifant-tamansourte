@@ -136,7 +136,18 @@ export default function RegisterForm({ onClose, onSuccess }: RegisterFormProps) 
               <div>
                 <label className="block font-dm text-[11px] text-[#8888aa] mb-1.5 font-bold uppercase tracking-wider">Email Address</label>
                 <div className="relative">
-                  <input type="email" required value={email} onChange={(e) => { setEmail(e.target.value); setError('') }} placeholder="your@email.com" className="input-field py-2.5 text-sm pr-10" />
+                  <input 
+                    type="email" 
+                    required 
+                    value={email} 
+                    onChange={(e) => { 
+                      setEmail(e.target.value); 
+                      setError('');
+                      setEmailExists(false);
+                    }} 
+                    placeholder="your@email.com" 
+                    className="input-field py-2.5 text-sm pr-10" 
+                  />
                   {email.includes('@') && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs">{emailExists ? '❌' : '✅'}</span>}
                 </div>
                 {emailExists && <div className="mt-2 text-[10px] text-[#e17055] font-medium">⚠️ Email already registered.</div>}

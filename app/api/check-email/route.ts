@@ -10,32 +10,23 @@ export async function GET(req: NextRequest) {
   }
 
   const supabase = createServiceRoleClient()
+  const cleanEmail = email.trim().toLowerCase()
 
   try {
-    // 1. Check verified attendees
-    const { data: verified, error: verifiedError } = await supabase
+    // Check verified attendees ONLY
+    const { data: attendee, error: attendeeError } = await supabase
       .from('attendees')
       .select('id')
-      .eq('email', email)
+      .eq('email', cleanEmail)
       .maybeSingle()
 
-    if (verifiedError) throw verifiedError
-
-    if (verified) {
-      return NextResponse.json({ exists: true, status: 'verified' })
+    if (attendeeError) {
+      console.error('check-email database error:', attendeeError)
+      throw attendeeError
     }
 
-    // 2. Check pending requests (optional but good for context)
-    const { data: pending, error: pendingError } = await supabase
-      .from('otp_requests')
-      .select('email')
-      .eq('email', email)
-      .maybeSingle()
-
-    if (pendingError) throw pendingError
-
-    if (pending) {
-      return NextResponse.json({ exists: true, status: 'pending' })
+    if (attendee) {
+      return NextResponse.json({ exists: true, status: 'verified' })
     }
 
     return NextResponse.json({ exists: false })

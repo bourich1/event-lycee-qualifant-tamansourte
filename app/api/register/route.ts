@@ -5,7 +5,8 @@ import crypto from 'crypto'
 export async function POST(req: NextRequest) {
   const supabase = createServiceRoleClient()
   try {
-    const { full_name, email, school_id } = await req.json()
+    const { full_name, email: rawEmail, school_id } = await req.json()
+    const email = rawEmail?.trim().toLowerCase()
 
     if (!full_name || !email) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
